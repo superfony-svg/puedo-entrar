@@ -45,6 +45,7 @@ form{display:flex;gap:8px;flex-wrap:wrap}
 .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
 .help{font-size:.88rem;color:var(--muted);margin:0}
 .guias{display:flex;flex-wrap:wrap;gap:6px 14px}
+.txt{font:inherit;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);width:100%;min-width:0}
 .menu{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.92rem;font-weight:600;padding-bottom:10px;border-bottom:1px solid var(--line)}.menu a{text-decoration:none;color:var(--accent)}.menu a:hover{text-decoration:underline}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .labelrow{display:flex;align-items:center;gap:14px}
@@ -127,6 +128,18 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
     </div>
     <div id="cityverdict"></div>
     <dl id="info"></dl>
+  </section>
+
+  <section class="card" aria-labelledby="h-ruta" id="ruta">
+    <h2 id="h-ruta">Planifica tu viaje</h2>
+    <p class="help">Escribe de dónde sales y a dónde vas. Te decimos qué zonas de bajas emisiones atraviesa la ruta en coche y si puedes entrar con tu etiqueta.</p>
+    <form id="rf" style="display:flex;flex-direction:column;gap:8px">
+      <input class="txt" id="rorig" placeholder="Origen: calle, ciudad o pueblo" aria-label="Origen" required autocomplete="off">
+      <input class="txt" id="rdest" placeholder="Destino: calle, ciudad o pueblo" aria-label="Destino" required autocomplete="off">
+      <button class="btn" type="submit">Ver la ruta</button>
+    </form>
+    <div id="rres" aria-live="polite" style="display:flex;flex-direction:column;gap:8px"></div>
+    <p class="help">La ruta es orientativa (calculada con OpenStreetMap y OSRM): tu navegador puede llevarte por otro camino. Para buscarla, el origen y el destino se envían a esos servicios.</p>
   </section>
 
   <section class="card" aria-labelledby="h-ciu">
@@ -342,6 +355,42 @@ async function init(){
   if(m&&m.actualizado)$("meta").textContent="Datos del "+m.actualizado.split("-").reverse().join("/")+".";
 }
 init();
+// Planificador de viaje
+let rutaCapa=null;
+async function geocode(q){
+  const r=await fetch("https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=es&accept-language=es&q="+encodeURIComponent(q));
+  const j=await r.json();return j[0]?{p:[+j[0].lat,+j[0].lon],n:j[0].display_name.split(",").slice(0,2).join(",")}:null;
+}
+$("rf").addEventListener("submit",async e=>{e.preventDefault();
+  const out=$("rres");out.textContent="Buscando la ruta…";
+  try{
+    const o=await geocode($("rorig").value);await new Promise(r=>setTimeout(r,1100));const d=await geocode($("rdest").value);
+    if(!o||!d){out.textContent="No encontramos "+(!o?"el origen":"el destino")+". Prueba con el nombre del pueblo o la ciudad.";return}
+    const r=await (await fetch("https://router.project-osrm.org/route/v1/driving/"+o.p[1]+","+o.p[0]+";"+d.p[1]+","+d.p[0]+"?overview=full&geometries=geojson")).json();
+    if(!r.routes||!r.routes.length){out.textContent="No hemos podido calcular la ruta. Inténtalo de nuevo en un momento.";return}
+    const pts=r.routes[0].geometry.coordinates.map(([lo,la])=>[la,lo]);
+    const hits=[];
+    for(const z of zones){
+      if(!z.bbox)continue;const near=pts.filter(q=>q[0]>=z.bbox[0]&&q[0]<=z.bbox[2]&&q[1]>=z.bbox[1]&&q[1]<=z.bbox[3]);if(!near.length)continue;
+      const ps=await polys(z.id);
+      if(!ps){if(z.sin_mapa)hits.push({z,dudoso:true});continue}
+      const idx=pts.findIndex(q=>ps.some(pl=>inside(q,pl)));if(idx>=0)hits.push({z,idx,destino:ps.some(pl=>inside(d.p,pl))});
+    }
+    hits.sort((a,b)=>(a.idx??1e9)-(b.idx??1e9));
+    out.textContent="";
+    const km=Math.round(r.routes[0].distance/1000);
+    out.appendChild(el("p",null,o.n+" → "+d.n+" ("+km+" km)"));
+    if(!hits.length)out.appendChild(el("p","summary","La ruta no pasa por ninguna zona de bajas emisiones de las que tenemos."));
+    hits.forEach(h=>{const z=h.z;const v=label?zoneVerdict(z,label):"unk";
+      const b=el("div","verdict "+(v==="ok"?"ok":v==="no"?"no":"warn"));
+      b.append(el("strong",null,"ZBE de "+z.ciudad+(z.zona?" · "+z.zona:"")+(h.destino?" (tu destino está dentro)":"")),
+        el("span",null,h.dudoso?"Pasas cerca: aún no tenemos el contorno exacto de esta zona.":label?VTXT[v]+(fiab(z).ok?"":" · dato sin verificar"):"Comprueba tu matrícula arriba para saber si puedes entrar."));
+      out.appendChild(b)});
+    if(map){if(rutaCapa)rutaCapa.remove();rutaCapa=L.polyline(pts,{color:"#1f4fb8",weight:4}).addTo(map);map.fitBounds(rutaCapa.getBounds(),{padding:[20,20]});
+      for(const h of hits){const ps=await polys(h.z.id);if(ps)ps.forEach(pl=>{const v=label?zoneVerdict(h.z,label):"ok";layers.push(L.polygon(pl,{color:colorOf(v),weight:2,fillOpacity:.15}).addTo(map))})}}
+    out.appendChild(el("p","help","Mira la ruta en el mapa de arriba. Información orientativa: confirma siempre las normas en la web de cada ayuntamiento."));
+  }catch(err){out.textContent="No hemos podido calcular la ruta ahora. Inténtalo de nuevo en un momento."}
+});
 // Compartir: nunca enviamos la matrícula, solo la etiqueta y el enlace
 $("share").addEventListener("click",()=>{
   const url="https://superfony-svg.github.io/puedo-entrar/";

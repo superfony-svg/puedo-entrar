@@ -213,6 +213,7 @@ def aviso_legal():
 <li><strong>Ubicación:</strong> solo se usa si pulsas «¿Dónde estoy?» y das permiso. Se queda en tu dispositivo y no se envía a nadie.</li>
 <li><strong>Municipio del impuesto:</strong> si lo eliges, se guarda solo en tu navegador (almacenamiento local) para recordarlo la próxima vez. Es una preferencia que pides tú, por lo que no necesita aviso de cookies. Se borra al borrar los datos del sitio en tu navegador.</li>
 <li><strong>Servicios de terceros:</strong> la web está alojada en GitHub Pages (GitHub, Inc.) y el mapa usa las imágenes de OpenStreetMap y la librería Leaflet desde cdnjs (Cloudflare). Como en cualquier web, esos servidores reciben tu dirección IP y los ficheros que pide tu navegador, según sus propias políticas de privacidad.</li>
+<li><strong>Planificador de viaje:</strong> si lo usas, el origen y el destino que escribes se envían a Nominatim (OpenStreetMap) para encontrarlos y a OSRM para calcular la ruta, según sus propias políticas. No los guardamos.</li>
 <li><strong>Si nos avisas de un error</strong> en GitHub, tu mensaje es público y lo gestiona GitHub. Solo lo usamos para corregir el dato.</li>
 </ul></section>
 <section class="card"><h2>Fuentes, licencias y reutilización</h2>
