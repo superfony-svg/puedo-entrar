@@ -1,0 +1,854 @@
+{
+ "_nota": "Municipios y territorios insulares obligados a tener ZBE (Ley 7/2021). Lista de zonasbajasemision.es (168, según MITECO y DGT) más Vic. 'estado_prensa': lo que decía Motor16 el 31/03/2026 (vigor, tramite, pendiente) o vacío si no lo decía. Los que ya tienen datos (DGT, OSM o manuales) usan esos datos; el resto sale como página básica.",
+ "fuentes": [
+  "https://zonasbajasemision.es/",
+  "https://www.motor16.com/las-ultimas-noticias/vigor-zbe-ciudades-lista/"
+ ],
+ "municipios": [
+  {
+   "ciudad": "Sevilla",
+   "ccaa": "Andalucía",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Málaga",
+   "ccaa": "Andalucía",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Córdoba",
+   "ccaa": "Andalucía",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Granada",
+   "ccaa": "Andalucía",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Jerez de la Frontera",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Almería",
+   "ccaa": "Andalucía",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Marbella",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Huelva",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Dos Hermanas",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Algeciras",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Cádiz",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Jaén",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Roquetas de Mar",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "San Fernando",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Mijas",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "El Puerto de Santa María",
+   "ccaa": "Andalucía",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "El Ejido",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Chiclana de la Frontera",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Vélez-Málaga",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Fuengirola",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Alcalá de Guadaíra",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Estepona",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Benalmádena",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Sanlúcar de Barrameda",
+   "ccaa": "Andalucía",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Torremolinos",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "La Línea de la Concepción",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Motril",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Linares",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Utrera",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Rincón de la Victoria",
+   "ccaa": "Andalucía",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Zaragoza",
+   "ccaa": "Aragón",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Huesca",
+   "ccaa": "Aragón",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Gijón",
+   "ccaa": "Asturias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Oviedo",
+   "ccaa": "Asturias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Avilés",
+   "ccaa": "Asturias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Siero",
+   "ccaa": "Asturias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Las Palmas de Gran Canaria",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Santa Cruz de Tenerife",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "San Cristóbal de La Laguna",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Telde",
+   "ccaa": "Canarias",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Arona",
+   "ccaa": "Canarias",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Santa Lucía de Tirajana",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Arrecife",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "San Bartolomé de Tirajana",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Granadilla de Abona",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Adeje",
+   "ccaa": "Canarias",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Isla de El Hierro",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Fuerteventura",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Gran Canaria",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de La Gomera",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de La Palma",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Lanzarote",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Tenerife",
+   "ccaa": "Canarias",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Santander",
+   "ccaa": "Cantabria",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Torrelavega",
+   "ccaa": "Cantabria",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Valladolid",
+   "ccaa": "Castilla y León",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Burgos",
+   "ccaa": "Castilla y León",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Salamanca",
+   "ccaa": "Castilla y León",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "León",
+   "ccaa": "Castilla y León",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Palencia",
+   "ccaa": "Castilla y León",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Ponferrada",
+   "ccaa": "Castilla y León",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Zamora",
+   "ccaa": "Castilla y León",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Ávila",
+   "ccaa": "Castilla y León",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Segovia",
+   "ccaa": "Castilla y León",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Albacete",
+   "ccaa": "Castilla-La Mancha",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Guadalajara",
+   "ccaa": "Castilla-La Mancha",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Toledo",
+   "ccaa": "Castilla-La Mancha",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Talavera de la Reina",
+   "ccaa": "Castilla-La Mancha",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Ciudad Real",
+   "ccaa": "Castilla-La Mancha",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Cuenca",
+   "ccaa": "Castilla-La Mancha",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Barcelona",
+   "ccaa": "Cataluña",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "L'Hospitalet de Llobregat",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Terrassa",
+   "ccaa": "Cataluña",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Badalona",
+   "ccaa": "Cataluña",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Sabadell",
+   "ccaa": "Cataluña",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Lleida",
+   "ccaa": "Cataluña",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Tarragona",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Mataró",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Santa Coloma de Gramenet",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Reus",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Girona",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Sant Cugat del Vallès",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Cornellà de Llobregat",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Sant Boi de Llobregat",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Rubí",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Manresa",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Vilanova i la Geltrú",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Castelldefels",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Viladecans",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "El Prat de Llobregat",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Granollers",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Cerdanyola del Vallès",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Mollet del Vallès",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Gavà",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Esplugues de Llobregat",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Sant Adrià de Besòs",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Sant Joan Despí",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Manlleu",
+   "ccaa": "Cataluña",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Vic",
+   "ccaa": "Cataluña",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Ceuta",
+   "ccaa": "Ceuta",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Madrid",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Móstoles",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Alcalá de Henares",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Fuenlabrada",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Leganés",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Getafe",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Alcorcón",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Torrejón de Ardoz",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Parla",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Alcobendas",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Rivas-Vaciamadrid",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Las Rozas de Madrid",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "San Sebastián de los Reyes",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Pozuelo de Alarcón",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Coslada",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Valdemoro",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Majadahonda",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Collado Villalba",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Boadilla del Monte",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Aranjuez",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Arganda del Rey",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Pinto",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Colmenar Viejo",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Tres Cantos",
+   "ccaa": "Comunidad de Madrid",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "València",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": "tramite"
+  },
+  {
+   "ciudad": "Alicante",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Elche",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Castellón de la Plana",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Torrent",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Torrevieja",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Orihuela",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Gandia",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Paterna",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Benidorm",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Sagunto",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "San Vicente del Raspeig",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Alcoy",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Elda",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Vila-real",
+   "ccaa": "Comunidad Valenciana",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Badajoz",
+   "ccaa": "Extremadura",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Cáceres",
+   "ccaa": "Extremadura",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Mérida",
+   "ccaa": "Extremadura",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Vigo",
+   "ccaa": "Galicia",
+   "estado_prensa": "tramite"
+  },
+  {
+   "ciudad": "A Coruña",
+   "ccaa": "Galicia",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Ourense",
+   "ccaa": "Galicia",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Santiago de Compostela",
+   "ccaa": "Galicia",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Lugo",
+   "ccaa": "Galicia",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Pontevedra",
+   "ccaa": "Galicia",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Ferrol",
+   "ccaa": "Galicia",
+   "estado_prensa": "pendiente"
+  },
+  {
+   "ciudad": "Palma",
+   "ccaa": "Islas Baleares",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Calvià",
+   "ccaa": "Islas Baleares",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Eivissa",
+   "ccaa": "Islas Baleares",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Formentera",
+   "ccaa": "Islas Baleares",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Ibiza",
+   "ccaa": "Islas Baleares",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Mallorca",
+   "ccaa": "Islas Baleares",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Isla de Menorca",
+   "ccaa": "Islas Baleares",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Logroño",
+   "ccaa": "La Rioja",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Melilla",
+   "ccaa": "Melilla",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Pamplona",
+   "ccaa": "Navarra",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Bilbao",
+   "ccaa": "País Vasco",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Vitoria-Gasteiz",
+   "ccaa": "País Vasco",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "San Sebastián",
+   "ccaa": "País Vasco",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Barakaldo",
+   "ccaa": "País Vasco",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Getxo",
+   "ccaa": "País Vasco",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Irun",
+   "ccaa": "País Vasco",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Murcia",
+   "ccaa": "Región de Murcia",
+   "estado_prensa": "tramite"
+  },
+  {
+   "ciudad": "Cartagena",
+   "ccaa": "Región de Murcia",
+   "estado_prensa": "vigor"
+  },
+  {
+   "ciudad": "Lorca",
+   "ccaa": "Región de Murcia",
+   "estado_prensa": ""
+  },
+  {
+   "ciudad": "Molina de Segura",
+   "ccaa": "Región de Murcia",
+   "estado_prensa": ""
+  }
+ ]
+}

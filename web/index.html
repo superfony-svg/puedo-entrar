@@ -178,11 +178,11 @@ function zoneVerdict(z,lab){
   if(esVecino(z))return "exc";
   return z.solo_episodios?"warn":"no";
 }
-const RANK={no:4,warn:3,exc:2,unk:1,ok:0};
+const RANK={no:4,warn:3,exc:2,unk:1,pend:1,ok:0};
 const hasExc=()=>$("x-hist").checked||$("x-pmr").checked;
 const esVecino=z=>!!($("x-res").value&&$("x-res").value===z.ciudad&&z.excepciones&&z.excepciones.residentes);
-function cityVerdict(c,lab){return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
-const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta",exc:"Puede que tengas excepción: compruébalo"};
+function cityVerdict(c,lab){if(c.pend)return "pend";return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
+const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta",pend:"Sin datos aún: consulta al ayuntamiento",exc:"Puede que tengas excepción: compruébalo"};
 function horarioTxt(z){
   if(!z.horario||!z.horario.length)return "Consulta el horario en la web del ayuntamiento";
   return z.horario.map(h=>h.dias+(h.de?" de "+h.de+" a "+(h.a==="23:59"?"24:00":h.a):"")).join(" · ");
@@ -195,10 +195,10 @@ function fiab(z){
   if(z.corregido)return {ok:false,txt:"Dato de la DGT corregido a mano por nosotros porque se contradecía"};
   return {ok:true,txt:"Oficial: publicado por la DGT en su Punto de Acceso Nacional"+(z.version?" (versión del "+z.version.split("-").reverse().join("/")+")":"")};
 }
-const verificada=c=>c.zonas.every(z=>fiab(z).ok);
+const verificada=c=>!c.pend&&c.zonas.every(z=>fiab(z).ok);
 function cityRow(c,v){
   const b=el("button","row");b.type="button";
-  const s=el("span","st "+v);const n=el("span","nm",c.nombre);const t=el("span","tx",VTXT[v]+(verificada(c)?"":" · dato sin verificar"));
+  const s=el("span","st "+(v==="pend"?"unk":v));const n=el("span","nm",c.nombre);const t=el("span","tx",VTXT[v]+(verificada(c)?"":" · dato sin verificar"));
   b.append(s,n,t);b.addEventListener("click",()=>{selectCity(c.nombre);$("h-map").scrollIntoView({behavior:"smooth"})});
   return b;
 }
@@ -211,11 +211,12 @@ function showLabel(lab,title,sub){
   const v=$("verdicts");v.textContent="";
   if(lab&&cities.length){
     const res=cities.map(c=>({c,v:cityVerdict(c,lab)}));
-    const ok=res.filter(r=>r.v==="ok").length;
-    v.appendChild(el("p","summary","Según los datos publicados, puedes entrar siempre en "+ok+" de "+res.length+" ciudades con zona de bajas emisiones"));
+    const ok=res.filter(r=>r.v==="ok").length,con=res.filter(r=>r.v!=="pend").length,sin=res.length-con;
+    v.appendChild(el("p","summary","Según los datos publicados, puedes entrar siempre en "+ok+" de "+con+" ciudades con zona de bajas emisiones"));
+    if(sin)v.appendChild(el("p","help","De otros "+sin+" municipios obligados aún no tenemos las normas: están en «Ver todas las ciudades»."));
     if(hasExc())v.appendChild(el("p","help","Muchos ayuntamientos dan excepciones o permisos a los vehículos históricos y a los de personas con movilidad reducida, pero las condiciones cambian mucho de una ciudad a otra (por ejemplo, en Barcelona los históricos solo pueden entrar 24 días al año con permiso) y casi siempre hay que registrar la matrícula antes. Toca una ciudad para ver su norma."));
     else if(lab==="N"||lab==="B")v.appendChild(el("p","help","¿Es un vehículo histórico, tienes tarjeta de movilidad reducida o tu coche paga el impuesto en alguna de estas ciudades? Indícalo arriba: en esos casos suele haber excepciones."));
-    const bad=res.filter(r=>r.v!=="ok");
+    const bad=res.filter(r=>r.v!=="ok"&&r.v!=="pend");
     if(bad.length){v.appendChild(el("p","help","Ojo en estas:"));const ul=el("div","list");bad.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));v.appendChild(ul)}
     const det=el("details");det.appendChild(el("summary",null,"Ver todas las ciudades"));
     const ul=el("div","list");ul.style.marginTop="10px";res.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));det.appendChild(ul);v.appendChild(det);
@@ -249,6 +250,11 @@ async function renderCity(fit){
   if(label){const v=cityVerdict(current,label);const d=el("div","verdict "+(v==="ok"?"ok":v==="no"?"no":"warn"));
     if(v==="exc")d.append(el("strong",null,current.nombre+": puede que tengas excepción"),el("span",null,"Comprueba en la web del ayuntamiento si debes registrar tu matrícula antes de entrar."));else
     d.append(el("strong",null,current.nombre+": "+VTXT[v].toLowerCase()),el("span",null,label==="N"?"Para coches sin etiqueta.":"Con etiqueta "+LABELS[label].name+"."));cv.appendChild(d)}
+  if(current.pend){const p=current.pend,dl=(a,b)=>info.append(el("dt",null,a),el("dd",null,b));
+    dl("Estado",{vigor:"Según la prensa (marzo de 2026), la zona ya está en vigor. Aún no tenemos sus normas.",tramite:"Según la prensa (marzo de 2026), la zona está en trámite.",pendiente:"Según la prensa (marzo de 2026), aún no había empezado los trámites."}[p.estado_prensa]||"Obligada por ley a tener zona de bajas emisiones. Aún no hemos comprobado si está en vigor.");
+    dl("Qué hacer","Consulta en la web del ayuntamiento qué etiquetas pueden entrar antes de ir.");
+    dl("Fuente de este dato","⚠ Prensa y listados públicos. Sin verificar con la ordenanza municipal");
+    const a=el("a",null,"Ver la página de "+current.nombre);a.href="zbe/"+current.nombre.normalize("NFKD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"")+"/";const dd=el("dd");dd.appendChild(a);info.append(el("dt",null,"Más"),dd);}
   current.zonas.forEach(z=>{
     const add=(a,b,link)=>{const dt=el("dt",null,a),dd=el("dd");if(link){const x=el("a",null,b);x.href=link;x.target="_blank";x.rel="noopener";dd.appendChild(x)}else dd.textContent=b;info.append(dt,dd)};
     if(z.zona)add("Zona",z.zona);
@@ -311,6 +317,8 @@ $("city").addEventListener("change",e=>selectCity(e.target.value));
 async function init(){
   zones=(await getJSON("data/zonas.json"))||[];
   const by={};zones.forEach(z=>{(by[z.ciudad]=by[z.ciudad]||{nombre:z.ciudad,zonas:[]}).zonas.push(z)});
+  const pend=(await getJSON("data/pendientes.json"))||[];
+  pend.forEach(m=>{if(!by[m.ciudad])by[m.ciudad]={nombre:m.ciudad,zonas:[],pend:m}});
   cities=Object.values(by).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
   cities.forEach(c=>{const o=el("option",null,c.nombre);o.value=c.nombre;$("city").appendChild(o);
     const r=el("option",null,c.nombre);r.value=c.nombre;$("x-res").appendChild(r)});

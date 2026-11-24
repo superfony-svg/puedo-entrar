@@ -15,6 +15,7 @@ Web gratuita que, a partir de la matrícula, dice la etiqueta ambiental de la DG
 - `osm_zonas.json`: zonas de OpenStreetMap para ciudades que la DGT no publica.
 - `avisos.json`: avisos por ciudad que cambian lo de la DGT (`aviso`, `fuente`, `estado`; un `estado` distinto de `active` hace que la web diga que se puede entrar). Ejemplo: Málaga, zona anulada.
 - `manuales.json`: zonas puestas a mano para ciudades que no están ni en la DGT ni en OpenStreetMap (ejemplo: Almería). Sin contorno: `bbox` aproximado solo para centrar el mapa.
+- `municipios.json`: lista de municipios y territorios insulares obligados a tener ZBE. Los que no tienen datos salen con una página básica (estado según prensa) y en `web/data/pendientes.json`.
 - `guias.py`: texto de las guías (`web/guias/`).
 
 `scripts/build_paginas.py` genera las páginas de ciudad, las guías, la clasificación `web/ciudades-abiertas/`, el mapa del sitio y aplica `avisos.json`.

@@ -277,7 +277,7 @@ GRUPOS = [
 ]
 
 
-def pagina_ranking(by):
+def pagina_ranking(by, pend=()):
     grupos = {}
     for c, zs in by.items():
         g, motivo = abierta(zs)
@@ -294,6 +294,9 @@ def pagina_ranking(by):
     if dudosas:
         bloques.append('<section class="card"><h2>Pendientes de comprobar</h2><p class="muted">Los datos publicados de estas ciudades no son claros. No las clasificamos hasta comprobar su ordenanza.</p><p class="guias">'
                        + "".join(f'<a href="../zbe/{slug(c)}/">{e(c)}</a>' for c, _, _ in dudosas) + "</p></section>")
+    if pend:
+        bloques.append(f'<section class="card"><h2>Sin datos todavía ({len(pend)})</h2><p class="muted">Municipios obligados a tener zona de bajas emisiones de los que aún no tenemos las normas. Toca uno para ver lo que sabemos.</p><p class="guias">'
+                       + "".join(f'<a href="../zbe/{slug(m["ciudad"])}/">{e(m["ciudad"])}</a>' for m in sorted(pend, key=lambda m: slug(m["ciudad"]))) + "</p></section>")
     n = sum(len(grupos.get(i, [])) for i in range(len(GRUPOS)))
     titulo = "Ciudades más abiertas al visitante: dónde puedes entrar sin miedo a multas"
     desc = "Clasificación de las ciudades españolas con zona de bajas emisiones según lo fácil que es entrar con un coche de fuera. Hecha con datos oficiales y actualizada cada día."
@@ -344,6 +347,56 @@ def aplicar_avisos(web, zonas):
                 z["estado"] = a["estado"]
     with open(os.path.join(web, "data", "zonas.json"), "w", encoding="utf-8") as f:
         json.dump(zonas, f, ensure_ascii=False, separators=(",", ":"))
+
+
+ESTADO_PRENSA = {
+    "vigor": "Según la prensa (Motor16, 31 de marzo de 2026), {c} ya tiene la zona de bajas emisiones en vigor. Aún no tenemos sus normas detalladas (etiquetas, horario y mapa).",
+    "tramite": "Según la prensa (Motor16, 31 de marzo de 2026), la zona de bajas emisiones de {c} estaba en trámite: aprobada o en preparación, pero no del todo en marcha.",
+    "pendiente": "Según la prensa (Motor16, 31 de marzo de 2026), {c} aún no había empezado los trámites de su zona de bajas emisiones o no lo había comunicado.",
+    "": "{c} está obligada por la Ley de Cambio Climático a tener una zona de bajas emisiones. Aún no hemos comprobado si ya está en vigor ni si multa.",
+}
+
+
+def cubierta(m, ciudades):
+    a = slug(m)
+    return any(a == b or b.startswith(a + "-") or b.endswith("-" + a) for b in map(slug, ciudades))
+
+
+def pendientes(ciudades):
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "municipios.json")
+    if not os.path.exists(path):
+        return []
+    ms = json.load(open(path, encoding="utf-8"))["municipios"]
+    return [m for m in ms if not cubierta(m["ciudad"], ciudades)]
+
+
+def pagina_basica(m, todas):
+    c = m["ciudad"]
+    s = slug(c)
+    estado = ESTADO_PRENSA.get(m.get("estado_prensa", ""), ESTADO_PRENSA[""]).format(c=c)
+    titulo = f"ZBE de {c}: ¿está en vigor? Etiquetas y multas"
+    desc = f"Zona de bajas emisiones de {c}: estado y qué hacer antes de ir. Comprueba gratis la etiqueta de tu coche con la matrícula."
+    otras = " · ".join(f'<a href="../{slug(x)}/">{e(x)}</a>' for x in todas if x != c)
+    ld = faq_ld([(f"¿Tiene {c} zona de bajas emisiones?", estado)])
+    return (cabecera(titulo, desc, f"{BASE}zbe/{s}/", ld, "../../")
+            + f"""<p class="muted"><a href="../../">¿Puedo entrar?</a> › Zonas de bajas emisiones › {e(c)}</p>
+<h1>Zona de bajas emisiones de {e(c)}</h1>
+<section class="card"><h2>Estado</h2><p>{e(estado)}</p>
+<dl><dt>Comunidad</dt><dd>{e(m.get("ccaa", ""))}</dd><dt>Fuente de este dato</dt><dd>⚠ Prensa y listados públicos. Sin verificar con la ordenanza municipal.</dd></dl></section>
+<section class="card"><h2>Qué hacer antes de ir</h2><ol>
+<li>Comprueba tu etiqueta con la matrícula (abajo).</li>
+<li>Busca «zona de bajas emisiones» en la web del Ayuntamiento de {e(c)} y mira qué etiquetas pueden entrar y desde cuándo multan.</li>
+<li>Si tu coche tiene etiqueta C, ECO o Cero, en casi todas las zonas de España puedes entrar.</li>
+</ol></section>
+<section class="card"><h2>¿Puede entrar mi coche?</h2>
+<form action="../../" method="get"><label class="plate"><span>E</span><input name="q" placeholder="1234BCD" aria-label="Matrícula" maxlength="10" required></label><button type="submit">Comprobar</button></form>
+<p class="muted">Gratis y sin registro. No guardamos las matrículas.</p></section>
+<section class="card"><h2>¿Sabes cómo está la zona de {e(c)}?</h2><p class="muted">Si conoces la ordenanza o ves que ya multan, <a href="https://github.com/superfony-svg/puedo-entrar/issues/new?title={urllib.parse.quote("Datos de " + c)}" target="_blank" rel="noopener">avísanos</a> y la completamos.</p></section>
+<section class="card"><h2>Guías</h2><p class="guias">{guias_links("../../")}</p></section>
+<section class="card"><h2>Otras ciudades</h2><p class="muted">{otras}</p></section>
+{FOOTER.format(raiz='../../')}
+</div></body></html>
+""")
 
 
 def pagina(ciudad, zs, todas):
@@ -411,20 +464,30 @@ def main(web):
     by = {}
     for z in zonas:
         by.setdefault(z["ciudad"], []).append(z)
+    pend = pendientes(list(by))
+    with open(os.path.join(web, "data", "pendientes.json"), "w", encoding="utf-8") as f:
+        json.dump(pend, f, ensure_ascii=False, separators=(",", ":"))
     ciudades = sorted(by, key=slug)
+    todas = sorted(list(by) + [m["ciudad"] for m in pend], key=slug)
     urls = [BASE]
     for c in ciudades:
         d = os.path.join(web, "zbe", slug(c))
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
-            f.write(pagina(c, by[c], ciudades))
+            f.write(pagina(c, by[c], todas))
         urls.append(f"{BASE}zbe/{slug(c)}/")
+    for m in pend:
+        d = os.path.join(web, "zbe", slug(m["ciudad"]))
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+            f.write(pagina_basica(m, todas))
+        urls.append(f"{BASE}zbe/{slug(m['ciudad'])}/")
     os.makedirs(os.path.join(web, "aviso-legal"), exist_ok=True)
     with open(os.path.join(web, "aviso-legal", "index.html"), "w", encoding="utf-8") as f:
         f.write(aviso_legal())
     os.makedirs(os.path.join(web, "ciudades-abiertas"), exist_ok=True)
     with open(os.path.join(web, "ciudades-abiertas", "index.html"), "w", encoding="utf-8") as f:
-        f.write(pagina_ranking(by))
+        f.write(pagina_ranking(by, pend))
     urls.append(f"{BASE}ciudades-abiertas/")
     os.makedirs(os.path.join(web, "guias"), exist_ok=True)
     with open(os.path.join(web, "guias", "index.html"), "w", encoding="utf-8") as f:
@@ -446,11 +509,11 @@ def main(web):
         f.write(f"User-agent: *\nAllow: /\nDisallow: /data/\nSitemap: {BASE}sitemap.xml\n")
     idx = os.path.join(web, "index.html")
     s = open(idx, encoding="utf-8").read()
-    links = " · ".join(f'<a href="zbe/{slug(c)}/">{e(c)}</a>' for c in ciudades)
+    links = (f"{len(todas)} municipios: " + " · ".join(f'<a href="zbe/{slug(c)}/">{e(c)}</a>' for c in todas))
     s = re.sub(r"<!--CIUDADES-->.*?<!--/CIUDADES-->", f"<!--CIUDADES-->{links}<!--/CIUDADES-->", s, flags=re.S)
     s = re.sub(r"<!--GUIAS-->.*?<!--/GUIAS-->", "<!--GUIAS-->" + guias_links("") + "<!--/GUIAS-->", s, flags=re.S)
     open(idx, "w", encoding="utf-8").write(s)
-    print(f"{len(ciudades)} páginas de ciudad")
+    print(f"{len(ciudades)} páginas de ciudad con datos y {len(pend)} básicas")
 
 
 if __name__ == "__main__":
