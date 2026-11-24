@@ -297,6 +297,9 @@ async function init(){
   if(m&&m.actualizado)$("meta").textContent="Datos del "+m.actualizado.split("-").reverse().join("/")+".";
 }
 init();
+// Todos los enlaces a otras webs se abren en una pestaña nueva
+document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[href]");
+  if(a&&a.host&&a.host!==location.host){a.target="_blank";a.rel="noopener"}},true);
 </script>
 </body>
 </html>
