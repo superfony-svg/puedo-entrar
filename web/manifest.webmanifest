@@ -1,0 +1,16 @@
+{
+  "name": "¿Puedo entrar? Zonas de bajas emisiones",
+  "short_name": "Puedo entrar",
+  "description": "Escribe tu matrícula y mira tu etiqueta de la DGT y en qué zonas de bajas emisiones puedes entrar.",
+  "lang": "es",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f5f4",
+  "theme_color": "#1f6f5c",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png"},
+    {"src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ]
+}

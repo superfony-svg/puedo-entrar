@@ -10,6 +10,9 @@
 <meta property="og:description" content="Tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar. Gratis y sin registro.">
 <meta property="og:type" content="website"><meta property="og:url" content="https://superfony-svg.github.io/puedo-entrar/"><meta property="og:image" content="https://superfony-svg.github.io/puedo-entrar/og.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#1f6f5c">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231f6f5c'/%3E%3Ctext x='32' y='42' font-size='28' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3EZ%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
@@ -79,6 +82,7 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
   <header>
     <h1>¿Puedo entrar con mi coche?</h1>
     <p class="sub">Escribe tu matrícula y te decimos tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar.</p>
+    <div id="install" hidden style="margin-top:10px"><button class="btn ghost" type="button" id="installbtn">Instalar como app en el móvil</button> <span class="help" id="installhelp"></span></div>
   </header>
 
   <section class="card" aria-labelledby="h-mat">
@@ -107,6 +111,9 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
       <div><div id="ltitle" style="font-family:var(--display);font-weight:700;font-size:1.2rem"></div><div class="help" id="lsub"></div></div>
     </div>
     <div id="verdicts" style="display:flex;flex-direction:column;gap:12px"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn ghost" type="button" id="share">Compartir por WhatsApp</button>
+    </div>
   </section>
 
   <section class="card" aria-labelledby="h-map">
@@ -335,6 +342,23 @@ async function init(){
   if(m&&m.actualizado)$("meta").textContent="Datos del "+m.actualizado.split("-").reverse().join("/")+".";
 }
 init();
+// Compartir: nunca enviamos la matrícula, solo la etiqueta y el enlace
+$("share").addEventListener("click",()=>{
+  const url="https://superfony-svg.github.io/puedo-entrar/";
+  const txt=(label?"Mi coche tiene etiqueta "+LABELS[label].name+" de la DGT. ":"")+"Mira en qué zonas de bajas emisiones puede entrar el tuyo, con tu matrícula y gratis: "+url;
+  if(navigator.share){navigator.share({text:txt}).catch(()=>{});return}
+  window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank","noopener");
+});
+// Instalar como app
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
+let instalar=null;
+const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();instalar=e;if(!standalone)$("install").hidden=false});
+$("installbtn").addEventListener("click",async()=>{
+  if(instalar){instalar.prompt();await instalar.userChoice.catch(()=>{});instalar=null;$("install").hidden=true;return}
+  $("installhelp").textContent="En iPhone: pulsa el botón Compartir de Safari y luego «Añadir a pantalla de inicio».";
+});
+if(!standalone&&/iphone|ipad|ipod/i.test(navigator.userAgent)){$("install").hidden=false}
 // Todos los enlaces a otras webs se abren en una pestaña nueva
 document.addEventListener("click",e=>{const a=e.target.closest&&e.target.closest("a[href]");
   if(a&&a.host&&a.host!==location.host){a.target="_blank";a.rel="noopener"}},true);

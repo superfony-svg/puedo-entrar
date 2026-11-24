@@ -143,6 +143,7 @@ def cabecera(titulo, desc, url, ld, raiz="../"):
 <meta property="og:title" content="{e(titulo)}"><meta property="og:description" content="{e(desc)}">
 <meta property="og:type" content="article"><meta property="og:url" content="{url}"><meta property="og:image" content="{BASE}og.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="{BASE}manifest.webmanifest"><meta name="theme-color" content="#1f6f5c"><link rel="apple-touch-icon" href="{BASE}icons/apple-touch-icon.png">
 <style>{CSS}</style>
 <script type="application/ld+json">{ld}</script>
 </head><body><div class="wrap">
@@ -394,6 +395,7 @@ def pagina_basica(m, todas):
 <section class="card"><h2>¿Sabes cómo está la zona de {e(c)}?</h2><p class="muted">Si conoces la ordenanza o ves que ya multan, <a href="https://github.com/superfony-svg/puedo-entrar/issues/new?title={urllib.parse.quote("Datos de " + c)}" target="_blank" rel="noopener">avísanos</a> y la completamos.</p></section>
 <section class="card"><h2>Guías</h2><p class="guias">{guias_links("../../")}</p></section>
 <section class="card"><h2>Otras ciudades</h2><p class="muted">{otras}</p></section>
+<p><a href="https://wa.me/?text={urllib.parse.quote("Zona de bajas emisiones de " + c + ": qué coches pueden entrar, horario y multas. " + BASE + "zbe/" + slug(c) + "/")}" target="_blank" rel="noopener">Compartir por WhatsApp</a></p>
 {FOOTER.format(raiz='../../')}
 </div></body></html>
 """)
@@ -436,6 +438,7 @@ def pagina(ciudad, zs, todas):
 <meta property="og:title" content="{e(titulo)}"><meta property="og:description" content="{e(desc)}">
 <meta property="og:type" content="article"><meta property="og:url" content="{BASE}zbe/{s}/"><meta property="og:image" content="{BASE}og.png">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="manifest" href="{BASE}manifest.webmanifest"><meta name="theme-color" content="#1f6f5c"><link rel="apple-touch-icon" href="{BASE}icons/apple-touch-icon.png">
 <style>{CSS}</style>
 <script type="application/ld+json">{ld}</script>
 </head><body><div class="wrap">
@@ -453,6 +456,7 @@ def pagina(ciudad, zs, todas):
 <section class="card"><h2>Guías</h2><p class="guias">{guias_links("../../")}</p></section>
 <section class="card"><h2>¿Has visto un error?</h2><p class="muted">Las normas cambian. Si algo no cuadra con la ordenanza o las señales, <a href="https://github.com/superfony-svg/puedo-entrar/issues/new?title={urllib.parse.quote("Error en " + ciudad)}" target="_blank" rel="noopener">avísanos</a> y lo corregimos.</p></section>
 <section class="card"><h2>Otras ciudades</h2><p class="muted">{otras}</p></section>
+<p><a href="https://wa.me/?text={urllib.parse.quote("Zona de bajas emisiones de " + ciudad + ": qué coches pueden entrar, horario y multas. " + BASE + "zbe/" + slug(ciudad) + "/")}" target="_blank" rel="noopener">Compartir por WhatsApp</a></p>
 {FOOTER.format(raiz='../../')}
 </div></body></html>
 """
