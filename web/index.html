@@ -43,6 +43,7 @@ form{display:flex;gap:8px;flex-wrap:wrap}
 .btn:focus-visible,.chip:focus-visible,a:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
 .help{font-size:.88rem;color:var(--muted);margin:0}
+.guias{display:flex;flex-wrap:wrap;gap:6px 14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .labelrow{display:flex;align-items:center;gap:14px}
 .badge{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font:700 1rem var(--display);color:#fff;flex:none}
@@ -122,6 +123,11 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
   <section class="card" aria-labelledby="h-ciu">
     <h2 id="h-ciu">Zonas de bajas emisiones por ciudad</h2>
     <p class="help"><!--CIUDADES--><!--/CIUDADES--></p>
+  </section>
+
+  <section class="card" aria-labelledby="h-gui">
+    <h2 id="h-gui">Guías</h2>
+    <p class="help guias"><!--GUIAS--><!--/GUIAS--></p>
   </section>
 
   <footer>
@@ -233,7 +239,8 @@ async function renderCity(fit){
     const add=(a,b,link)=>{const dt=el("dt",null,a),dd=el("dd");if(link){const x=el("a",null,b);x.href=link;x.target="_blank";x.rel="noopener";dd.appendChild(x)}else dd.textContent=b;info.append(dt,dd)};
     if(z.zona)add("Zona",z.zona);
     add("Pueden entrar",z.permitidas?z.permitidas.map(k=>LABELS[k].name).join(", "):"Los datos de la DGT no son claros: consulta la web del ayuntamiento");
-    if(z.estado&&z.estado!=="active")add("Estado","Aún no está activa");
+    if(z.aviso)add("Aviso",z.aviso,null);else if(z.estado&&z.estado!=="active")add("Estado","Aún no está activa");
+    if(z.aviso&&z.aviso_fuente&&/^https?:\/\//.test(z.aviso_fuente))add("Fuente del aviso","Leer la noticia",z.aviso_fuente);
     if(z.desde&&z.desde>new Date().toISOString().slice(0,10))add("Estado","Aún no se aplica");
     if(z.solo_episodios)add("Cuándo se aplica","Solo durante episodios de contaminación");
     add("Horario",horarioTxt(z));

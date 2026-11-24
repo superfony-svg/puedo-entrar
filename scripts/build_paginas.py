@@ -12,6 +12,8 @@ import sys
 import unicodedata
 from datetime import date
 
+from guias import GUIAS
+
 BASE = os.environ.get("BASE_URL", "https://superfony-svg.github.io/puedo-entrar/")
 NOMBRES = {"0": "Cero emisiones", "E": "ECO", "C": "C (verde)", "B": "B (amarilla)", "N": "Sin etiqueta"}
 TODAS = ["0", "E", "C", "B", "N"]
@@ -36,6 +38,9 @@ dl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;margin:0}dt{color:va
 .chip.ok{color:var(--ok);border-color:var(--ok)}.chip.no{color:var(--no);border-color:var(--no)}
 .muted{color:var(--muted);font-size:.88rem;margin:0}
 footer{font-size:.8rem;color:var(--muted)}
+ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}p{margin:0}
+details{border-top:1px solid var(--line);padding-top:10px}summary{font-weight:600;cursor:pointer}details p{margin-top:6px}
+.guias{display:flex;flex-wrap:wrap;gap:6px 14px}
 """
 
 
@@ -66,7 +71,9 @@ def zona_html(z, ciudad):
     rows = []
     if z.get("zona"):
         rows.append(("Zona", e(z["zona"])))
-    if z.get("estado") and z["estado"] != "active":
+    if z.get("aviso"):
+        rows.append(("Aviso", f'<strong>{e(z["aviso"])}</strong>' + (f' <a href="{e(z["aviso_fuente"])}" target="_blank" rel="noopener">Fuente</a>' if z.get("aviso_fuente") else "")))
+    elif z.get("estado") and z["estado"] != "active":
         rows.append(("Estado", "Aún no está activa"))
     elif z.get("desde") and z["desde"] > date.today().isoformat():
         rows.append(("Estado", f"Se aplicará desde el {fecha(z['desde'])}"))
@@ -90,6 +97,8 @@ def zona_html(z, ciudad):
 
 
 def resumen(zs):
+    if zs and all(z.get("estado") not in (None, "", "active") for z in zs):
+        return "ahora mismo no se aplica la zona: pueden entrar todos los coches"
     perm = [z.get("permitidas") for z in zs if z.get("permitidas")]
     if not perm:
         return "consulta qué etiquetas pueden entrar"
@@ -99,6 +108,84 @@ def resumen(zs):
     if "N" not in comunes and comunes == ["0", "E", "C", "B"]:
         return "no pueden entrar los coches sin etiqueta"
     return "pueden entrar con etiqueta " + ", ".join(NOMBRES[k] for k in comunes) if comunes else "acceso muy restringido"
+
+
+FOOTER = ('<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico) y Punto de Acceso Nacional de la DGT (CC BY 4.0) y '
+          '© colaboradores de OpenStreetMap (ODbL), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento.</footer>')
+
+
+def guias_links(raiz):
+    return "".join(f'<a href="{raiz}guias/{g["slug"]}/">{e(g["titulo"])}</a>' for g in GUIAS)
+
+
+def cabecera(titulo, desc, url, ld):
+    return f"""<!doctype html>
+<html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{e(titulo)}</title>
+<meta name="description" content="{e(desc)}">
+<link rel="canonical" href="{url}">
+<meta property="og:title" content="{e(titulo)}"><meta property="og:description" content="{e(desc)}">
+<meta property="og:type" content="article"><meta property="og:url" content="{url}"><meta property="og:image" content="{BASE}og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@700&display=swap">
+<style>{CSS}</style>
+<script type="application/ld+json">{ld}</script>
+</head><body><div class="wrap">
+"""
+
+
+def faq_ld(pares):
+    return json.dumps({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in pares]},
+        ensure_ascii=False).replace("<", "\\u003c")
+
+
+def pagina_guia(g):
+    url = f"{BASE}guias/{g['slug']}/"
+    preguntas = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in g["faq"])
+    otras = "".join(f'<a href="../{o["slug"]}/">{e(o["titulo"])}</a>' for o in GUIAS if o is not g)
+    return (cabecera(g["title"], g["desc"], url, faq_ld(g["faq"]))
+            + f"""<p class="muted"><a href="../../">¿Puedo entrar?</a> › <a href="../">Guías</a></p>
+<h1>{e(g["titulo"])}</h1>
+<p class="muted">Revisado el {fecha(g["revisado"])}.</p>
+<section class="card"><h2>¿Puede entrar tu coche?</h2><p>Escribe tu matrícula y te decimos tu etiqueta oficial de la DGT y en qué ciudades puedes entrar.</p>
+<form action="../../" method="get"><label class="plate"><span>E</span><input name="q" placeholder="1234BCD" aria-label="Matrícula" maxlength="10" required></label><button type="submit">Comprobar</button></form></section>
+{re.sub(r'<a href="(https?://[^"]+)">', r'<a href="\\1" target="_blank" rel="noopener">', g["cuerpo"])}
+<section class="card"><h2>Preguntas frecuentes</h2>{preguntas}</section>
+<section class="card"><h2>Más guías</h2><p class="guias">{otras}</p></section>
+{FOOTER}
+</div></body></html>
+""")
+
+
+def indice_guias():
+    items = "".join(f'<section class="card"><h2><a href="{g["slug"]}/">{e(g["titulo"])}</a></h2><p class="muted">{e(g["desc"])}</p></section>' for g in GUIAS)
+    return (cabecera("Guías sobre zonas de bajas emisiones: multas, etiquetas, ayudas y excepciones",
+                     "Guías claras sobre las zonas de bajas emisiones de España: recurrir multas, etiquetas de la DGT, históricos, coches extranjeros, ayudas y preguntas frecuentes.",
+                     f"{BASE}guias/", faq_ld([]))
+            + f"""<p class="muted"><a href="../">¿Puedo entrar?</a> › Guías</p>
+<h1>Guías sobre zonas de bajas emisiones</h1>
+{items}
+{FOOTER}
+</div></body></html>
+""")
+
+
+def aplicar_avisos(web, zonas):
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "avisos.json")
+    if not os.path.exists(path):
+        return
+    avisos = json.load(open(path, encoding="utf-8"))
+    for z in zonas:
+        a = avisos.get(z["ciudad"])
+        if isinstance(a, dict):
+            z["aviso"] = a.get("aviso", "")
+            z["aviso_fuente"] = a.get("fuente", "")
+            if a.get("estado"):
+                z["estado"] = a["estado"]
+    with open(os.path.join(web, "data", "zonas.json"), "w", encoding="utf-8") as f:
+        json.dump(zonas, f, ensure_ascii=False, separators=(",", ":"))
 
 
 def pagina(ciudad, zs, todas):
@@ -150,7 +237,8 @@ def pagina(ciudad, zs, todas):
 <p class="muted">Gratis y sin registro. No guardamos las matrículas.</p></section>
 {zonas}
 {excb}
-<section class="card"><h2>Multas</h2><p>Entrar en la zona sin cumplir los requisitos suele costar <strong>200 €</strong> (100 € con pronto pago). La cuantía exacta la fija el ayuntamiento de {e(ciudad)}.</p></section>
+<section class="card"><h2>Multas</h2><p>Entrar en la zona sin cumplir los requisitos suele costar <strong>200 €</strong> (100 € con pronto pago). La cuantía exacta la fija el ayuntamiento de {e(ciudad)}. <a href="../../guias/recurrir-multa-zbe/">Cómo recurrir una multa</a>.</p></section>
+<section class="card"><h2>Guías</h2><p class="guias">{guias_links("../../")}</p></section>
 <section class="card"><h2>Otras ciudades</h2><p class="muted">{otras}</p></section>
 <footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico) y Punto de Acceso Nacional de la DGT (CC BY 4.0) y © colaboradores de OpenStreetMap (ODbL), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento.</footer>
 </div></body></html>
@@ -159,6 +247,7 @@ def pagina(ciudad, zs, todas):
 
 def main(web):
     zonas = json.load(open(os.path.join(web, "data", "zonas.json"), encoding="utf-8"))
+    aplicar_avisos(web, zonas)
     by = {}
     for z in zonas:
         by.setdefault(z["ciudad"], []).append(z)
@@ -170,6 +259,16 @@ def main(web):
         with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
             f.write(pagina(c, by[c], ciudades))
         urls.append(f"{BASE}zbe/{slug(c)}/")
+    os.makedirs(os.path.join(web, "guias"), exist_ok=True)
+    with open(os.path.join(web, "guias", "index.html"), "w", encoding="utf-8") as f:
+        f.write(indice_guias())
+    urls.append(f"{BASE}guias/")
+    for g in GUIAS:
+        d = os.path.join(web, "guias", g["slug"])
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+            f.write(pagina_guia(g))
+        urls.append(f"{BASE}guias/{g['slug']}/")
     hoy = date.today().isoformat()
     with open(os.path.join(web, "sitemap.xml"), "w") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n')
@@ -182,6 +281,7 @@ def main(web):
     s = open(idx, encoding="utf-8").read()
     links = " · ".join(f'<a href="zbe/{slug(c)}/">{e(c)}</a>' for c in ciudades)
     s = re.sub(r"<!--CIUDADES-->.*?<!--/CIUDADES-->", f"<!--CIUDADES-->{links}<!--/CIUDADES-->", s, flags=re.S)
+    s = re.sub(r"<!--GUIAS-->.*?<!--/GUIAS-->", "<!--GUIAS-->" + guias_links("") + "<!--/GUIAS-->", s, flags=re.S)
     open(idx, "w", encoding="utf-8").write(s)
     print(f"{len(ciudades)} páginas de ciudad")
 

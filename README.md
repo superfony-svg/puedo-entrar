@@ -8,6 +8,16 @@ Web gratuita que, a partir de la matrícula, dice la etiqueta ambiental de la DG
 - `scripts/build_data.py`: convierte el fichero oficial de la DGT (`export_dist_ambiental.zip`, unos 30 millones de matrículas) en miles de trozos pequeños, para que la web solo descargue el que necesita.
 - `.github/workflows/publicar.yml`: cada noche descarga el fichero de la DGT, prepara los datos y publica la web en GitHub Pages. También se ejecuta con cada cambio en `main` y a mano desde la pestaña *Actions*.
 
+## Ficheros que se editan a mano (en `scripts/`)
+
+- `correcciones.json`: corrige datos de la DGT por id de zona (por ejemplo, `permitidas`).
+- `excepciones.json`: norma de cada ciudad para históricos (`historicos`), movilidad reducida (`pmr`), `fuente` y `revisado`. Clave: nombre de la ciudad.
+- `osm_zonas.json`: zonas de OpenStreetMap para ciudades que la DGT no publica.
+- `avisos.json`: avisos por ciudad que cambian lo de la DGT (`aviso`, `fuente`, `estado`; un `estado` distinto de `active` hace que la web diga que se puede entrar). Ejemplo: Málaga, zona anulada.
+- `guias.py`: texto de las guías (`web/guias/`).
+
+`scripts/build_paginas.py` genera las páginas de ciudad, las guías, el mapa del sitio y aplica `avisos.json`.
+
 ## Fuentes
 
 - Etiquetas: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico), microdatos de distintivo ambiental. Se citan como fuente y no se alteran.

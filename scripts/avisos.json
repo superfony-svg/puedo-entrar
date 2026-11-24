@@ -1,0 +1,9 @@
+{
+  "_nota": "Avisos a mano por ciudad que cambian lo publicado por la DGT (por ejemplo, una zona anulada por un tribunal). Clave: nombre de la ciudad tal como sale en zonas.json. 'estado' distinto de 'active' hace que la web diga que se puede entrar.",
+  "Málaga": {
+    "estado": "suspendida",
+    "aviso": "La ZBE de Málaga no se aplica: el Tribunal Superior de Justicia de Andalucía anuló su regulación (sentencia de 6 de mayo de 2026) y el Ayuntamiento no pone multas desde el 14 de octubre de 2026. Las multas en trámite están suspendidas y las ya pagadas se devolverán de oficio.",
+    "fuente": "https://www.elespanol.com/malaga/20261019/malaga-devolvera-dinero-multas-zbe-tramite-hacer/1003744426101_0.html",
+    "revisado": "2026-11-24"
+  }
+}
