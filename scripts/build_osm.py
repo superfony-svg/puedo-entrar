@@ -137,7 +137,11 @@ def main(out):
     conf = json.load(open(os.path.join(HERE, "osm_zonas.json"), encoding="utf-8"))
     conf.pop("_nota", None)
     els = []
-    for k in conf:  # uno a uno: si uno falla, los demás siguen
+    def tiene_copia(k):
+        f = os.path.join(CACHE, k.replace("/", "_") + ".json")
+        return os.path.exists(f) and util(json.load(open(f)))
+    # primero los que no tienen copia buena, para que cada noche se completen más
+    for k in sorted(conf, key=tiene_copia):  # uno a uno: si uno falla, los demás siguen
         el, origen = elemento(k)
         print(f"{k} ({conf[k]['ciudad']}): {origen}")
         if el:
