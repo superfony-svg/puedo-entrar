@@ -10,6 +10,7 @@ import os
 import re
 import sys
 import unicodedata
+import urllib.parse
 from datetime import date
 
 from guias import GUIAS
@@ -85,7 +86,7 @@ def zona_html(z, ciudad):
             for k in TODAS)
         rows.append(("Etiquetas", f'<div class="chips">{chips}</div>'))
     else:
-        rows.append(("Etiquetas", "Los datos publicados por la DGT no son claros: consulta la web del ayuntamiento."))
+        rows.append(("Etiquetas", "Los datos publicados no son claros: consulta la web del ayuntamiento."))
     if z.get("solo_episodios"):
         rows.append(("Cuándo se aplica", "Solo durante episodios de contaminación alta"))
     rows.append(("Horario", e(horario(z))))
@@ -95,6 +96,9 @@ def zona_html(z, ciudad):
         rows.append(("Detalles", e(z["descripcion"])))
     if z.get("info_url", "").startswith("http"):
         rows.append(("Más info", f'<a href="{e(z["info_url"])}" rel="noopener" target="_blank">Web del ayuntamiento</a>'))
+    ok, txt = fiab(z)
+    rows.append(("Fuente de este dato", ("✓ " if ok else "⚠ ") + e(txt)
+                 + (f' <a href="{e(z["fuente_datos"])}" target="_blank" rel="noopener">Ver resumen</a>' if z.get("fuente_datos", "").startswith("http") else "")))
     return "<dl>" + "".join(f"<dt>{a}</dt><dd>{b}</dd>" for a, b in rows) + "</dl>"
 
 
@@ -113,7 +117,7 @@ def resumen(zs):
 
 
 FOOTER = ('<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico) y Punto de Acceso Nacional de la DGT (CC BY 4.0) y '
-          '© colaboradores de OpenStreetMap (ODbL), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento.</footer>')
+          '© colaboradores de OpenStreetMap (ODbL), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento. <a href="{raiz}aviso-legal/">Aviso legal y privacidad</a>.</footer>')
 
 
 def guias_links(raiz):
@@ -130,7 +134,6 @@ def cabecera(titulo, desc, url, ld):
 <meta property="og:title" content="{e(titulo)}"><meta property="og:description" content="{e(desc)}">
 <meta property="og:type" content="article"><meta property="og:url" content="{url}"><meta property="og:image" content="{BASE}og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@700&display=swap">
 <style>{CSS}</style>
 <script type="application/ld+json">{ld}</script>
 </head><body><div class="wrap">
@@ -156,7 +159,55 @@ def pagina_guia(g):
 {re.sub(r'<a href="(https?://[^"]+)">', r'<a href="\\1" target="_blank" rel="noopener">', g["cuerpo"])}
 <section class="card"><h2>Preguntas frecuentes</h2>{preguntas}</section>
 <section class="card"><h2>Más guías</h2><p class="guias">{otras}</p></section>
-{FOOTER}
+{FOOTER.format(raiz='../../')}
+</div></body></html>
+""")
+
+
+def fiab(z):
+    if z.get("aviso"):
+        return False, "Aviso puesto por nosotros a partir de noticias: confírmalo en el ayuntamiento."
+    if z.get("fuente") == "osm":
+        return False, "OpenStreetMap (mapa colaborativo hecho por voluntarios). Sin verificar con la ordenanza municipal."
+    if z.get("fuente") == "manual":
+        return False, "Resumen de terceros. Sin verificar con la ordenanza municipal."
+    if z.get("corregido"):
+        return False, "Dato de la DGT corregido a mano por nosotros porque se contradecía."
+    return True, "Oficial: publicado por la DGT en su Punto de Acceso Nacional" + (f" (versión del {fecha(z['version'])})." if z.get("version") else ".")
+
+
+def aviso_legal():
+    return (cabecera("Aviso legal y privacidad · ¿Puedo entrar?", "Condiciones de uso, responsabilidad, fuentes de datos y privacidad de ¿Puedo entrar?.", f"{BASE}aviso-legal/", faq_ld([]))
+            + f"""<p class="muted"><a href="../">¿Puedo entrar?</a> › Aviso legal</p>
+<h1>Aviso legal y privacidad</h1>
+<p class="muted">Actualizado el {fecha(date.today().isoformat())}.</p>
+<section class="card"><h2>Qué es esta web</h2>
+<p>¿Puedo entrar? es una web <strong>informativa y no oficial</strong>. No tiene relación con la Dirección General de Tráfico (DGT) ni con ningún ayuntamiento.</p></section>
+<section class="card"><h2>La información es orientativa</h2>
+<ul>
+<li>Juntamos datos públicos: el fichero de etiquetas de la DGT, las zonas que publica la DGT en su Punto de Acceso Nacional, el mapa colaborativo OpenStreetMap y resúmenes de normas.</li>
+<li>Estos datos pueden tener errores, estar incompletos o no estar al día. En cada ciudad indicamos de dónde sale cada dato y si está verificado con la norma oficial.</li>
+<li>Lo que vale es la <strong>ordenanza municipal</strong> publicada en el boletín oficial y las <strong>señales</strong> de la zona. Ante cualquier duda, manda lo que diga el ayuntamiento.</li>
+<li>Usar esta web no da derecho a entrar en ninguna zona ni sirve como justificante ante una multa.</li>
+</ul></section>
+<section class="card"><h2>Responsabilidad</h2>
+<p>Hacemos lo posible para que la información sea correcta, pero no podemos garantizarlo. Comprueba siempre la norma oficial antes de entrar en una zona de bajas emisiones. No respondemos de las sanciones o daños que se deriven de decisiones tomadas solo con la información de esta web, en la medida en que la ley lo permita.</p></section>
+<section class="card"><h2>Privacidad</h2>
+<ul>
+<li><strong>No hay registro, ni cookies, ni analítica.</strong></li>
+<li><strong>Matrícula:</strong> la búsqueda se hace en tu propio navegador. Tu navegador descarga un fichero que contiene miles de matrículas y busca la tuya en él. No guardamos las matrículas que escribes.</li>
+<li><strong>Ubicación:</strong> solo se usa si pulsas «¿Dónde estoy?», y se queda en tu dispositivo. No se envía a nadie.</li>
+<li><strong>Municipio del impuesto:</strong> si lo eliges, se guarda solo en tu navegador (almacenamiento local) para la próxima visita. Se borra al borrar los datos del sitio.</li>
+<li><strong>Servicios de terceros:</strong> la web está alojada en GitHub Pages (GitHub, Inc.) y el mapa usa las imágenes de OpenStreetMap. Como en cualquier web, esos servidores reciben tu dirección IP al cargar las páginas y el mapa.</li>
+</ul></section>
+<section class="card"><h2>Fuentes y licencias</h2>
+<ul>
+<li>Etiquetas: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico). Se muestran sin alterar. Se pueden consultar gratis en la <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">sede de la DGT</a>.</li>
+<li>Zonas: Punto de Acceso Nacional de la DGT (licencia CC BY 4.0) y © colaboradores de OpenStreetMap (licencia ODbL).</li>
+</ul></section>
+<section class="card"><h2>Errores y contacto</h2>
+<p>Si ves un dato mal, <a href="https://github.com/superfony-svg/puedo-entrar/issues/new?title=Error%20en%20los%20datos" target="_blank" rel="noopener">avísanos aquí</a>, con el enlace a la norma oficial si puedes. Lo revisaremos y corregiremos lo antes posible.</p></section>
+{FOOTER.format(raiz='../')}
 </div></body></html>
 """)
 
@@ -169,7 +220,7 @@ def indice_guias():
             + f"""<p class="muted"><a href="../">¿Puedo entrar?</a> › Guías</p>
 <h1>Guías sobre zonas de bajas emisiones</h1>
 {items}
-{FOOTER}
+{FOOTER.format(raiz='../')}
 </div></body></html>
 """)
 
@@ -236,7 +287,7 @@ def pagina_ranking(by):
 <p>Muchas personas viajan a otras ciudades por trabajo, turismo o para ver a la familia. Aquí ordenamos {n} ciudades con zona de bajas emisiones según lo fácil que se lo ponen a un coche de fuera, de más abierta a más exigente.</p>
 <p class="muted">Cómo lo hacemos: solo con los datos publicados por la DGT, OpenStreetMap y los ayuntamientos, sin opiniones. Se actualiza cada día. Si una ciudad tiene permisos especiales para visitantes, lo indicamos. Escribe tu matrícula en <a href="../">el buscador</a> para ver tu caso exacto.</p>
 {"".join(bloques)}
-{FOOTER}
+{FOOTER.format(raiz='../')}
 </div></body></html>
 """)
 
@@ -256,7 +307,8 @@ def añadir_manuales(zonas):
              "estado": "active", "permitidas": m.get("permitidas"), "dato_dudoso": not m.get("permitidas"),
              "solo_episodios": m.get("solo_episodios", False), "descripcion": m.get("descripcion", ""),
              "horario": m.get("horario", []), "desde": m.get("desde", ""), "info_url": m.get("info_url", ""),
-             "version": m.get("revisado", ""), "bbox": m["bbox"], "fuente": "manual", "sin_mapa": True}
+             "version": m.get("revisado", ""), "bbox": m["bbox"], "fuente": "manual", "sin_mapa": True,
+             "fuente_datos": m.get("fuente_datos", "")}
         if ciudad in exc:
             z["excepciones"] = exc[ciudad]
         zonas.append(z)
@@ -315,7 +367,6 @@ def pagina(ciudad, zs, todas):
 <meta property="og:title" content="{e(titulo)}"><meta property="og:description" content="{e(desc)}">
 <meta property="og:type" content="article"><meta property="og:url" content="{BASE}zbe/{s}/"><meta property="og:image" content="{BASE}og.png">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@700&display=swap">
 <style>{CSS}</style>
 <script type="application/ld+json">{ld}</script>
 </head><body><div class="wrap">
@@ -330,8 +381,9 @@ def pagina(ciudad, zs, todas):
 {excb}
 <section class="card"><h2>Multas</h2><p>Entrar en la zona sin cumplir los requisitos suele costar <strong>200 €</strong> (100 € con pronto pago). La cuantía exacta la fija el ayuntamiento de {e(ciudad)}. <a href="../../guias/recurrir-multa-zbe/">Cómo recurrir una multa</a>.</p></section>
 <section class="card"><h2>Guías</h2><p class="guias">{guias_links("../../")}</p></section>
+<section class="card"><h2>¿Has visto un error?</h2><p class="muted">Las normas cambian. Si algo no cuadra con la ordenanza o las señales, <a href="https://github.com/superfony-svg/puedo-entrar/issues/new?title={urllib.parse.quote("Error en " + ciudad)}" target="_blank" rel="noopener">avísanos</a> y lo corregimos.</p></section>
 <section class="card"><h2>Otras ciudades</h2><p class="muted">{otras}</p></section>
-<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico) y Punto de Acceso Nacional de la DGT (CC BY 4.0) y © colaboradores de OpenStreetMap (ODbL), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento.</footer>
+{FOOTER.format(raiz='../../')}
 </div></body></html>
 """
 
@@ -350,6 +402,9 @@ def main(web):
         with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
             f.write(pagina(c, by[c], ciudades))
         urls.append(f"{BASE}zbe/{slug(c)}/")
+    os.makedirs(os.path.join(web, "aviso-legal"), exist_ok=True)
+    with open(os.path.join(web, "aviso-legal", "index.html"), "w", encoding="utf-8") as f:
+        f.write(aviso_legal())
     os.makedirs(os.path.join(web, "ciudades-abiertas"), exist_ok=True)
     with open(os.path.join(web, "ciudades-abiertas", "index.html"), "w", encoding="utf-8") as f:
         f.write(pagina_ranking(by))
