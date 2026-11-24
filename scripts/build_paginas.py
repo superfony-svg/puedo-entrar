@@ -152,7 +152,7 @@ def pagina(ciudad, zs, todas):
 {excb}
 <section class="card"><h2>Multas</h2><p>Entrar en la zona sin cumplir los requisitos suele costar <strong>200 €</strong> (100 € con pronto pago). La cuantía exacta la fija el ayuntamiento de {e(ciudad)}.</p></section>
 <section class="card"><h2>Otras ciudades</h2><p class="muted">{otras}</p></section>
-<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico) y Punto de Acceso Nacional de la DGT (CC BY 4.0), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento.</footer>
+<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico) y Punto de Acceso Nacional de la DGT (CC BY 4.0) y © colaboradores de OpenStreetMap (ODbL), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento.</footer>
 </div></body></html>
 """
 

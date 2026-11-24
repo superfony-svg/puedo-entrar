@@ -54,6 +54,7 @@ jobs:
             curl -fsSL --retry 3 "$base$f" -o "zbe/$(basename "$f")" || echo "::warning::No se pudo descargar $f"
           done
           python scripts/build_zonas.py zbe web/data
+          python scripts/build_osm.py web/data || echo "::warning::No se pudieron añadir las zonas de OpenStreetMap"
           python scripts/build_paginas.py web
 
       - name: Comprobar que hay datos
