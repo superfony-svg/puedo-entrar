@@ -45,5 +45,30 @@
     "visitantes": "Los coches sin etiqueta de fuera de Madrid no pueden entrar, salvo excepciones: históricos, movilidad reducida, emergencias y autorizaciones excepcionales (por ejemplo, ir al hospital por una enfermedad grave).",
     "fuente": "https://www.race.es/coche-sin-etiqueta-madrid",
     "revisado": "2026-11-24"
+  },
+  "Bilbao": {
+    "historicos": "Exentos los vehículos catalogados como históricos, pidiendo autorización antes del primer acceso con la resolución de catalogación.",
+    "pmr": "Exentos si llevan a una persona con tarjeta de movilidad reducida, comunicando los accesos por internet con la tarjeta y la matrícula.",
+    "residentes": "Exentos los coches de personas empadronadas dentro de la zona antes del 14 de junio de 2024 y que pagan en Bilbao el impuesto de circulación. Pagar el impuesto sin vivir dentro de la zona no basta.",
+    "residentes_exentos": false,
+    "visitantes": "Si vas a casa de alguien que vive en la zona, esa persona puede invitar hasta 6 coches al mes (12 si tiene más de 70 años), hasta 24 horas cada uno, avisando en las 48 horas siguientes. También puedes entrar para aparcar en los aparcamientos de rotación (Pío Baroja, Azkuna Zentroa, Plaza Euskadi, Plaza Indautxu, Instituto Unamuno, Zubiarte y El Corte Inglés), en hotel, taller o cita médica avisando en 48 horas.",
+    "fuente": "https://cecobi.es/wp-content/uploads/2024/06/CIRCULAR-55-RESUMEN-DE-LA-ORDENANZA-DE-ZONA-DE-BAJAS-EMISIONES-ZBE-DE-BILBAO.pdf",
+    "revisado": "2026-11-24"
+  },
+  "Valladolid": {
+    "historicos": "Según las directrices del Ayuntamiento, se tramitan una a una con declaración responsable. Hay una modificación de 2026 para que el acceso sea automático: confírmalo con el Ayuntamiento.",
+    "pmr": "Pueden entrar registrando el vehículo (uno por tarjeta) antes de entrar o en los 5 días naturales siguientes, con DNI, copia de la tarjeta y declaración responsable.",
+    "residentes": "Los coches sin etiqueta, B o C cuyo titular está empadronado en Valladolid pueden entrar sin hacer trámites. Los de renting, usufructo o sustitución deben pedir permiso.",
+    "visitantes": "Hay permisos temporales para talleres, hoteles, aparcamientos, citas médicas y otros casos. Se pide antes de entrar o en los 5 días naturales siguientes; si no, el sistema registra un acceso no autorizado.",
+    "fuente": "https://www.valladolid.gob.es/fr/tablon-oficial/ayuntamiento-valladolid-tablon-oficial/directrices-funcionamiento-zona-bajas-emisiones.fichiers/1060666-1-Directrices%20de%20funcionamiento%20de%20la%20ZBE.pdf",
+    "revisado": "2026-11-24"
+  },
+  "Donostia / San Sebastián": {
+    "historicos": "No consta en la información para visitantes. Consulta en donostia.eus.",
+    "pmr": "No consta en la información para visitantes. Consulta en donostia.eus.",
+    "visitantes": "No va por etiqueta sino por fecha de matriculación: turismos y furgonetas desde el 1 de enero de 2006, motos desde 2004. Con matrícula española que cumple no hay que hacer nada. Con matrícula extranjera hay que declarar el vehículo antes de cada entrada, aunque cumpla.",
+    "tramite": "https://www.donostia.eus/Tramites/hasieraketa?idTramite=IGEAES&lang=es",
+    "fuente": "https://sansebastianturismoa.eus/venir/zona-bajas-emisiones-zbe-donostia-san-sebastian/",
+    "revisado": "2026-11-24"
   }
 }
