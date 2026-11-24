@@ -15,7 +15,7 @@ import urllib.request
 import unicodedata
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
+OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
 DIAS = {"Mo": "lunes", "Tu": "martes", "We": "miércoles", "Th": "jueves", "Fr": "viernes", "Sa": "sábado", "Su": "domingo"}
 TODAS = ["0", "E", "C", "B", "N"]
 
@@ -47,14 +47,20 @@ def overpass(query, intentos=2, espera=90):
     return None
 
 
+def util(el):
+    if el.get("type") == "way":
+        return len(el.get("geometry") or []) >= 3
+    return any(m.get("geometry") for m in el.get("members") or [])
+
+
 def elemento(key):
     """Pide un elemento a Overpass; si falla, usa la copia guardada de otra noche."""
     t, i = key.split("/")
     cache = os.path.join(CACHE, key.replace("/", "_") + ".json")
     r = None
     if time.time() < LIMITE:
-        r = overpass(f"[out:json][timeout:60];{t}(id:{i});out tags geom;", intentos=1, espera=75)
-    els = (r or {}).get("elements") or []
+        r = overpass(f"[out:json][timeout:60];{t}(id:{i});out body geom;", intentos=1, espera=60)  # body: las relaciones necesitan sus miembros
+    els = [x for x in (r or {}).get("elements") or [] if util(x)]
     if els:
         os.makedirs(CACHE, exist_ok=True)
         with open(cache, "w") as f:
