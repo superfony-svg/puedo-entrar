@@ -11,13 +11,11 @@ Datos © colaboradores de OpenStreetMap, licencia ODbL.
 import json
 import os
 import sys
-import time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from build_osm import overpass, slug, CACHE  # noqa: E402
+from build_osm import overpass, CACHE  # noqa: E402
 
 MARGEN = 0.06  # unos 6 km alrededor de las zonas
-LIMITE = time.time() + 480
 TIPOS = {"bus": "autobús", "train": "tren", "tram": "tranvía", "metro": "metro", "subway": "metro", "yes": ""}
 
 
@@ -29,22 +27,27 @@ def caja(zs):
             max(x[2] for x in b) + MARGEN, max(x[3] for x in b) + MARGEN)
 
 
-def pedir(ciudad, bb):
-    cache = os.path.join(CACHE, "pr_" + slug(ciudad) + ".json")
-    r = None
-    if time.time() < LIMITE:
-        s, w, n, e = bb
-        q = f'[out:json][timeout:60];nwr["park_ride"]["park_ride"!="no"]({s},{w},{n},{e});out center tags;'
-        r = overpass(q, intentos=1, espera=60)
-    if r is not None:
+def pedir_todos():
+    """Una sola consulta para toda España (unos pocos miles de aparcamientos)."""
+    cache = os.path.join(CACHE, "pr_espana.json")
+    q = ('[out:json][timeout:180];area["ISO3166-1"="ES"][admin_level=2]->.es;'
+         'nwr["park_ride"]["park_ride"!="no"](area.es);out center tags;')
+    r = overpass(q, intentos=2, espera=200)
+    if r is not None and r.get("elements"):
         os.makedirs(CACHE, exist_ok=True)
         with open(cache, "w") as f:
-            json.dump(r.get("elements", []), f)
-        return r.get("elements", []), "OSM"
+            json.dump(r["elements"], f)
+        return r["elements"], "OSM"
     if os.path.exists(cache):
         with open(cache) as f:
             return json.load(f), "copia"
     return None, "sin datos"
+
+
+def dentro(el, bb):
+    lat = el.get("lat") or (el.get("center") or {}).get("lat")
+    lon = el.get("lon") or (el.get("center") or {}).get("lon")
+    return lat is not None and lon is not None and bb[0] <= lat <= bb[2] and bb[1] <= lon <= bb[3]
 
 
 def main(out):
@@ -54,16 +57,16 @@ def main(out):
     for z in zonas:
         por.setdefault(z["ciudad"], []).append(z)
     res = {}
-    for ciudad in sorted(por, key=lambda c: os.path.exists(os.path.join(CACHE, "pr_" + slug(c) + ".json"))):
+    todos, origen = pedir_todos()
+    print(f"Aparcamientos disuasorios en España: {len(todos or [])} ({origen})")
+    if todos is None:
+        return
+    for ciudad in sorted(por):
         bb = caja(por[ciudad])
         if not bb:
             continue
-        els, origen = pedir(ciudad, bb)
-        if els is None:
-            print(f"{ciudad}: {origen}")
-            continue
         lista = []
-        for el in els:
+        for el in (x for x in todos if dentro(x, bb)):
             t = el.get("tags", {})
             lat = el.get("lat") or (el.get("center") or {}).get("lat")
             lon = el.get("lon") or (el.get("center") or {}).get("lon")
@@ -77,7 +80,7 @@ def main(out):
                           "tipo": ", ".join(TIPOS.get(x.strip(), x.strip()) for x in t.get("park_ride", "").split(";") if TIPOS.get(x.strip(), x.strip()))})
         lista.sort(key=lambda p: (p["n"] == "", p["n"]))
         res[ciudad] = lista[:40]
-        print(f"{ciudad}: {len(lista)} aparcamientos ({origen})")
+        print(f"{ciudad}: {len(lista)} aparcamientos")
     with open(os.path.join(out, "parkings.json"), "w", encoding="utf-8") as f:
         json.dump(res, f, ensure_ascii=False, separators=(",", ":"))
 

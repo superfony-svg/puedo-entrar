@@ -30,4 +30,4 @@ Web no oficial e informativa.
 
 ## Aparcamientos disuasorios
 
-`scripts/build_parkings.py` pide a OpenStreetMap los aparcamientos con la etiqueta `park_ride` en unos 6 km alrededor de cada zona y escribe `web/data/parkings.json` (`{"Ciudad": [{"n", "lat", "lon", "pago", "plazas", "tipo"}]}`). Si Overpass no responde usa la copia guardada en `osm_cache/pr_<ciudad>.json`. Cada página de ciudad los muestra en «Si tu coche no puede entrar», junto con el permiso de visitantes de `excepciones.json` (campo `visitantes`).
+`scripts/build_parkings.py` pide a OpenStreetMap, en una sola consulta para toda España, los aparcamientos con la etiqueta `park_ride` y asigna a cada ciudad los que quedan a unos 6 km de sus zonas. Escribe `web/data/parkings.json` (`{"Ciudad": [{"n", "lat", "lon", "pago", "plazas", "tipo"}]}`). Si Overpass no responde usa la copia guardada en `osm_cache/pr_espana.json`. Cada página de ciudad los muestra en «Si tu coche no puede entrar», junto con el permiso de visitantes de `excepciones.json` (campo `visitantes`).
