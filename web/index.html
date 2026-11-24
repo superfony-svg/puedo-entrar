@@ -42,6 +42,7 @@ form{display:flex;gap:8px;flex-wrap:wrap}
 .btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
 .help{font-size:.88rem;color:var(--muted);margin:0}
 .guias{display:flex;flex-wrap:wrap;gap:6px 14px}
+.menu{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.92rem;font-weight:600;padding-bottom:10px;border-bottom:1px solid var(--line)}.menu a{text-decoration:none;color:var(--accent)}.menu a:hover{text-decoration:underline}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
 .labelrow{display:flex;align-items:center;gap:14px}
 .badge{width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font:700 1rem var(--display);color:#fff;flex:none}
@@ -74,6 +75,7 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
 </head>
 <body>
 <div class="wrap">
+  <nav class="menu" aria-label="Menú"><a href="./">Inicio</a><a href="./#h-ciu">Ciudades</a><a href="./ciudades-abiertas/">Ciudades abiertas</a><a href="./guias/">Guías</a><a href="./guias/preguntas-frecuentes/">Preguntas</a><a href="./aviso-legal/">Aviso legal</a></nav>
   <header>
     <h1>¿Puedo entrar con mi coche?</h1>
     <p class="sub">Escribe tu matrícula y te decimos tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar.</p>

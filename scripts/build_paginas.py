@@ -42,6 +42,7 @@ footer{font-size:.8rem;color:var(--muted)}
 ul,ol{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}p{margin:0}
 details{border-top:1px solid var(--line);padding-top:10px}summary{font-weight:600;cursor:pointer}details p{margin-top:6px}
 .guias{display:flex;flex-wrap:wrap;gap:6px 14px}
+.menu{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.92rem;font-weight:600;padding-bottom:10px;border-bottom:1px solid var(--line)}.menu a{text-decoration:none;color:var(--accent)}.menu a:hover{text-decoration:underline}
 """
 
 
@@ -127,7 +128,12 @@ def guias_links(raiz):
     return f'<a href="{raiz}ciudades-abiertas/"><strong>Ciudades más abiertas al visitante</strong></a>' + "".join(f'<a href="{raiz}guias/{g["slug"]}/">{e(g["titulo"])}</a>' for g in GUIAS)
 
 
-def cabecera(titulo, desc, url, ld):
+def menu(raiz):
+    return (f'<nav class="menu" aria-label="Menú"><a href="{raiz}">Inicio</a><a href="{raiz}#h-ciu">Ciudades</a><a href="{raiz}ciudades-abiertas/">Ciudades abiertas</a>'
+            f'<a href="{raiz}guias/">Guías</a><a href="{raiz}guias/preguntas-frecuentes/">Preguntas</a><a href="{raiz}aviso-legal/">Aviso legal</a></nav>')
+
+
+def cabecera(titulo, desc, url, ld, raiz="../"):
     return f"""<!doctype html>
 <html lang="es"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -140,6 +146,7 @@ def cabecera(titulo, desc, url, ld):
 <style>{CSS}</style>
 <script type="application/ld+json">{ld}</script>
 </head><body><div class="wrap">
+{menu(raiz)}
 """
 
 
@@ -153,7 +160,7 @@ def pagina_guia(g):
     url = f"{BASE}guias/{g['slug']}/"
     preguntas = "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in g["faq"])
     otras = "".join(f'<a href="../{o["slug"]}/">{e(o["titulo"])}</a>' for o in GUIAS if o is not g)
-    return (cabecera(g["title"], g["desc"], url, faq_ld(g["faq"]))
+    return (cabecera(g["title"], g["desc"], url, faq_ld(g["faq"]), "../../")
             + f"""<p class="muted"><a href="../../">¿Puedo entrar?</a> › <a href="../">Guías</a></p>
 <h1>{e(g["titulo"])}</h1>
 <p class="muted">Revisado el {fecha(g["revisado"])}.</p>
@@ -379,6 +386,7 @@ def pagina(ciudad, zs, todas):
 <style>{CSS}</style>
 <script type="application/ld+json">{ld}</script>
 </head><body><div class="wrap">
+{menu("../../")}
 <p class="muted"><a href="../../">¿Puedo entrar?</a> › Zonas de bajas emisiones › {e(ciudad)}</p>
 <h1>Zona de bajas emisiones de {e(ciudad)}</h1>
 <p>En la ZBE de {e(ciudad)} {e(res)}. Escribe tu matrícula y te decimos al momento tu etiqueta oficial de la DGT y si puedes entrar.</p>
