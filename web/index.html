@@ -57,13 +57,21 @@ dt{color:var(--muted);font-size:.85rem} dd{margin:0;min-width:0}
 details summary{cursor:pointer;color:var(--accent);font-size:.92rem}
 footer{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
 [hidden]{display:none!important}
+.summary{font-family:var(--display);font-size:1.15rem;font-weight:700;margin:0}
+.list{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.row{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font:inherit;color:var(--fg);text-align:left;width:100%}
+.row .st{width:12px;height:12px;border-radius:50%;flex:none}
+.row .nm{flex:1;min-width:0;font-weight:600}
+.row .tx{font-size:.85rem;color:var(--muted);text-align:right}
+.st.ok{background:var(--ok)} .st.no{background:var(--no)} .st.warn{background:var(--lB)} .st.unk{background:var(--lN)}
+select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);width:100%}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>¿Puedo entrar con mi coche?</h1>
-    <p class="sub">Escribe tu matrícula y te decimos tu etiqueta de la DGT y si puedes entrar en la zona de bajas emisiones.</p>
+    <p class="sub">Escribe tu matrícula y te decimos tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar.</p>
   </header>
 
   <section class="card" aria-labelledby="h-mat">
@@ -84,22 +92,25 @@ footer{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap
       <div class="badge" id="badge"></div>
       <div><div id="ltitle" style="font-family:var(--display);font-weight:700;font-size:1.2rem"></div><div class="help" id="lsub"></div></div>
     </div>
-    <div id="verdicts" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div id="verdicts" style="display:flex;flex-direction:column;gap:12px"></div>
   </section>
 
   <section class="card" aria-labelledby="h-map">
-    <h2 id="h-map">Mapa de la zona</h2>
+    <h2 id="h-map">Mapa de las zonas</h2>
+    <label class="help" for="city">Elige una ciudad</label>
+    <select id="city"></select>
     <div id="map" role="region" aria-label="Mapa de la zona de bajas emisiones"></div>
     <div class="mapbar">
-      <span id="where">Pulsa el botón para ver si estás dentro de la zona.</span>
+      <span id="where">Pulsa el botón para ver si estás dentro de una zona.</span>
       <button class="btn ghost" type="button" id="locate">¿Dónde estoy?</button>
     </div>
+    <div id="cityverdict"></div>
     <dl id="info"></dl>
   </section>
 
   <footer>
     <span>Etiquetas: fichero oficial de la Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico), actualizado cada día. <span id="meta"></span> Mostramos la etiqueta tal como la asigna la DGT: solo traducimos su código (por ejemplo, 16MC) a su nombre (C). Esta información se puede consultar gratis en la <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">sede de la DGT</a>. <a href="https://sede.dgt.gob.es/es/contenido/derechos-sobre-la-propiedad-intelectual/index.html" target="_blank" rel="noopener">Condiciones de uso de la DGT</a>.</span>
-    <span>Zonas: Punto de Acceso Nacional de la DGT (CC BY 4.0). Web no oficial e informativa: confirma siempre en la web de tu ayuntamiento.</span>
+    <span>Zonas: Punto de Acceso Nacional de la DGT (nap.dgt.es, licencia CC BY 4.0), actualizado cada día. Las multas suelen ser de 200 € (100 € con pronto pago), pero las fija cada ayuntamiento. Web no oficial e informativa: confirma siempre en la web de tu ayuntamiento.</span>
   </footer>
 </div>
 
@@ -111,10 +122,13 @@ const LABELS={"0":{name:"Cero emisiones",short:"0",color:"var(--l0)"},
   "B":{name:"B (amarilla)",short:"B",color:"var(--lB)"},
   "N":{name:"Sin etiqueta",short:"–",color:"var(--lN)"}};
 const MODERN=/^(\d{4})([BCDFGHJKLMNPRSTVWXYZ]{3})$/, OLD=/^([A-Z]{1,3})(\d{2})/;
-let zones=[], label=null, pos=null, map, layers=[], me=null;
+let zones=[], cities=[], label=null, pos=null, map, layers=[], me=null, current=null;
 const $=id=>document.getElementById(id);
 const cache=new Map();
-async function getText(url){if(!cache.has(url))cache.set(url,fetch(url).then(r=>r.ok?r.text():null).catch(()=>null));return cache.get(url)}
+function getText(url){if(!cache.has(url))cache.set(url,fetch(url).then(r=>r.ok?r.text():null).catch(()=>null));return cache.get(url)}
+async function getJSON(url){const t=await getText(url);try{return t?JSON.parse(t):null}catch(e){return null}}
+function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+function lt(k){return k==="N"?"Sin etiqueta":"Etiqueta "+LABELS[k].name}
 
 async function lookup(raw){
   const p=raw.toUpperCase().replace(/[^A-Z0-9]/g,"");
@@ -129,52 +143,103 @@ async function lookup(raw){
   try{return {plate:p,code:JSON.parse(t)[p]||null}}catch(e){return {plate:p,code:null}}
 }
 
-function lt(k){return k==="N"?"Sin etiqueta":"Etiqueta "+LABELS[k].name}
-function canEnter(z,lab){return z.permitidas.includes(lab)}
+// Veredicto de una zona: ok | warn (solo en episodios) | no | unk (sin datos)
+function zoneVerdict(z,lab){
+  if(!lab)return "unk";
+  if(z.estado&&z.estado!=="active")return "ok";
+  if(!z.permitidas)return "unk";
+  if(z.permitidas.includes(lab))return "ok";
+  return z.solo_episodios?"warn":"no";
+}
+const RANK={no:3,warn:2,unk:1,ok:0};
+function cityVerdict(c,lab){return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
+const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Sin datos de etiquetas"};
+function horarioTxt(z){
+  if(!z.horario||!z.horario.length)return "Consulta el horario en la web del ayuntamiento";
+  return z.horario.map(h=>h.dias+(h.de?" de "+h.de+" a "+(h.a==="23:59"?"24:00":h.a):"")).join(" · ");
+}
+
+function cityRow(c,v){
+  const b=el("button","row");b.type="button";
+  const s=el("span","st "+v);const n=el("span","nm",c.nombre);const t=el("span","tx",VTXT[v]);
+  b.append(s,n,t);b.addEventListener("click",()=>{selectCity(c.nombre);$("h-map").scrollIntoView({behavior:"smooth"})});
+  return b;
+}
+
 function showLabel(lab,title,sub){
   label=lab;$("result").hidden=false;
   const b=$("badge");
   if(lab){b.style.background=LABELS[lab].color;b.textContent=LABELS[lab].short}else{b.style.background="var(--lN)";b.textContent="?"}
   $("ltitle").textContent=title;$("lsub").textContent=sub||"";
   const v=$("verdicts");v.textContent="";
-  if(lab)zones.forEach(z=>{
-    const ok=canEnter(z,lab),d=document.createElement("div");
-    const ep=z.tipo==="episodio";
-    d.className="verdict "+(ok?"ok":(ep?"warn":"no"));
-    const s=document.createElement("strong");
-    s.textContent=z.ciudad+": "+(ok?"puedes entrar":(ep?"puedes entrar, salvo en avisos de contaminación":"no puedes entrar"));
-    const t=document.createElement("span");t.textContent=ok?(ep?"Incluso durante los avisos de contaminación.":z.horario):z.resumen;
-    d.append(s,t);v.appendChild(d)});
-  drawZones();updateWhere();
+  if(lab&&cities.length){
+    const res=cities.map(c=>({c,v:cityVerdict(c,lab)}));
+    const ok=res.filter(r=>r.v==="ok").length;
+    v.appendChild(el("p","summary","Puedes entrar siempre en "+ok+" de "+res.length+" ciudades con zona de bajas emisiones"));
+    const bad=res.filter(r=>r.v!=="ok");
+    if(bad.length){v.appendChild(el("p","help","Ojo en estas:"));const ul=el("div","list");bad.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));v.appendChild(ul)}
+    const det=el("details");det.appendChild(el("summary",null,"Ver todas las ciudades"));
+    const ul=el("div","list");ul.style.marginTop="10px";res.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));det.appendChild(ul);v.appendChild(det);
+  }
+  renderCity();updateWhere();
 }
 
-const f=$("f");
-f.addEventListener("submit",async e=>{e.preventDefault();
+$("f").addEventListener("submit",async e=>{e.preventDefault();
   const r=await lookup($("q").value);
   if(r.bad)return showLabel(null,"Matrícula incompleta","Escríbela entera, por ejemplo 1234BCD o M1234AB.");
   if(r.missingData)return showLabel(null,"Buscador en preparación","Estamos cargando los datos de la DGT. Mientras, elige tu etiqueta abajo.");
   if(!r.code)return showLabel(null,"No encontramos "+r.plate,"No aparece en el fichero de la DGT. Revisa que esté bien escrita o consúltala en la sede de la DGT.");
   showLabel(r.code,lt(r.code),"Matrícula "+r.plate+" según la DGT");
 });
-Object.entries(LABELS).forEach(([k,l])=>{const b=document.createElement("button");b.type="button";b.className="chip";
-  const d=document.createElement("span");d.className="dot";d.style.background=l.color;d.textContent=l.short;
-  const s=document.createElement("span");s.textContent=l.name;b.append(d,s);
+Object.entries(LABELS).forEach(([k,l])=>{const b=el("button","chip");b.type="button";
+  const d=el("span","dot",l.short);d.style.background=l.color;
+  b.append(d,el("span",null,l.name));
   b.addEventListener("click",()=>showLabel(k,lt(k),"Elegida por ti"));$("chips").appendChild(b)});
 
 function inside([la,lo],poly){let r=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const[yi,xi]=poly[i],[yj,xj]=poly[j];if(((yi>la)!=(yj>la))&&(lo<(xj-xi)*(la-yi)/(yj-yi)+xi))r=!r}return r}
-function drawZones(){
-  if(!map)return;layers.forEach(l=>l.remove());layers=[];
-  zones.forEach(z=>{const ok=!label||canEnter(z,label);
-    const col=getComputedStyle(document.documentElement).getPropertyValue(ok?"--ok":"--no").trim();
-    layers.push(L.polygon(z.poligono,{color:col,weight:3,fillOpacity:.15}).addTo(map).bindTooltip("ZBE "+z.ciudad))});
+const polys=id=>getJSON("data/zonas/"+id+".json");
+const colorOf=v=>getComputedStyle(document.documentElement).getPropertyValue({ok:"--ok",no:"--no",warn:"--lB",unk:"--lN"}[v]).trim();
+
+function selectCity(name){current=cities.find(c=>c.nombre===name)||cities[0];$("city").value=current.nombre;renderCity(true)}
+async function renderCity(fit){
+  if(!current)return;
+  const info=$("info");info.textContent="";
+  const cv=$("cityverdict");cv.textContent="";
+  if(label){const v=cityVerdict(current,label);const d=el("div","verdict "+(v==="ok"?"ok":v==="no"?"no":"warn"));
+    d.append(el("strong",null,current.nombre+": "+VTXT[v].toLowerCase()),el("span",null,label==="N"?"Para coches sin etiqueta.":"Con etiqueta "+LABELS[label].name+"."));cv.appendChild(d)}
+  current.zonas.forEach(z=>{
+    const add=(a,b,link)=>{const dt=el("dt",null,a),dd=el("dd");if(link){const x=el("a",null,b);x.href=link;x.target="_blank";x.rel="noopener";dd.appendChild(x)}else dd.textContent=b;info.append(dt,dd)};
+    if(z.zona)add("Zona",z.zona);
+    add("Pueden entrar",z.permitidas?(z.permitidas.length?z.permitidas.map(k=>LABELS[k].name).join(", "):"Ninguna etiqueta"):"Sin datos en la DGT");
+    if(z.solo_episodios)add("Cuándo se aplica","Solo durante episodios de contaminación");
+    add("Horario",horarioTxt(z));
+    if(z.desde)add("En vigor desde",z.desde.split("-").reverse().join("/"));
+    if(z.descripcion&&z.descripcion.length>25)add("Detalles",z.descripcion);
+    if(z.info_url&&/^https?:\/\//.test(z.info_url))add("Más info","Web del ayuntamiento",z.info_url);
+  });
+  if(!map)return;
+  layers.forEach(l=>l.remove());layers=[];
+  const bounds=[];
+  for(const z of current.zonas){const ps=await polys(z.id);if(!ps)continue;
+    const v=zoneVerdict(z,label);const col=label?colorOf(v):colorOf("ok");
+    ps.forEach(p=>{const pl=L.polygon(p,{color:col,weight:3,fillOpacity:.15}).addTo(map).bindTooltip("ZBE "+current.nombre+(z.zona?" · "+z.zona:""));layers.push(pl);bounds.push(pl.getBounds())})}
+  if(fit&&bounds.length){let b=bounds[0];bounds.slice(1).forEach(x=>b.extend(x));map.fitBounds(b,{padding:[20,20]})}
 }
-function updateWhere(){
+
+async function updateWhere(){
   if(!pos)return;
-  const z=zones.find(z=>inside(pos,z.poligono));
-  if(!z){$("where").textContent="Estás fuera de la zona de bajas emisiones.";return}
-  if(!label){$("where").textContent="Estás dentro de la ZBE de "+z.ciudad+". Comprueba tu matrícula arriba.";return}
-  $("where").textContent=canEnter(z,label)?"Estás dentro de la ZBE de "+z.ciudad+" y puedes estar aquí."
-    :(z.tipo==="episodio"?"Estás dentro de la ZBE de "+z.ciudad+". Solo podrías tener problemas si hay aviso de contaminación.":"Estás dentro de la ZBE de "+z.ciudad+" y con tu etiqueta no deberías estar aquí.");
+  const cand=zones.filter(z=>pos[0]>=z.bbox[0]&&pos[0]<=z.bbox[2]&&pos[1]>=z.bbox[1]&&pos[1]<=z.bbox[3]);
+  let hit=null;
+  for(const z of cand){const ps=await polys(z.id);if(ps&&ps.some(p=>inside(pos,p))){hit=z;break}}
+  if(!hit){$("where").textContent="Estás fuera de las zonas de bajas emisiones que tenemos.";return}
+  const nm=hit.ciudad+(hit.zona?" ("+hit.zona+")":"");
+  if(current&&current.nombre!==hit.ciudad)selectCity(hit.ciudad);
+  if(!label){$("where").textContent="Estás dentro de la ZBE de "+nm+". Comprueba tu matrícula arriba.";return}
+  const v=zoneVerdict(hit,label);
+  $("where").textContent={ok:"Estás dentro de la ZBE de "+nm+" y puedes estar aquí.",
+    no:"Estás dentro de la ZBE de "+nm+" y con tu etiqueta no deberías estar aquí (revisa el horario).",
+    warn:"Estás dentro de la ZBE de "+nm+". Solo tendrías problema si hay aviso de contaminación.",
+    unk:"Estás dentro de la ZBE de "+nm+". No tenemos datos de etiquetas: consulta la web del ayuntamiento."}[v];
 }
 $("locate").addEventListener("click",()=>{
   if(!navigator.geolocation){$("where").textContent="Tu navegador no permite usar la ubicación.";return}
@@ -185,23 +250,20 @@ $("locate").addEventListener("click",()=>{
     ()=>{$("where").textContent="No hemos podido obtener tu ubicación. Revisa que el navegador tenga permiso."},
     {enableHighAccuracy:true,timeout:10000});
 });
+$("city").addEventListener("change",e=>selectCity(e.target.value));
 
 async function init(){
-  try{zones=await (await fetch("data/zonas.json")).json()}catch(e){zones=[]}
-  const z=zones[0];
-  if(z){const info=$("info");
-    [["Ciudad",z.ciudad],["Cuándo se aplica",z.resumen],["Horario",z.horario],["Multa",z.multa]].forEach(([a,b])=>{
-      const dt=document.createElement("dt");dt.textContent=a;const dd=document.createElement("dd");dd.textContent=b;info.append(dt,dd)});
-    const dt=document.createElement("dt");dt.textContent="Más info";const dd=document.createElement("dd");
-    const a=document.createElement("a");a.href=z.info_url;a.target="_blank";a.rel="noopener";a.textContent="Web del ayuntamiento";dd.appendChild(a);info.append(dt,dd);}
-  if(window.L&&z){
+  zones=(await getJSON("data/zonas.json"))||[];
+  const by={};zones.forEach(z=>{(by[z.ciudad]=by[z.ciudad]||{nombre:z.ciudad,zonas:[]}).zonas.push(z)});
+  cities=Object.values(by).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
+  cities.forEach(c=>{const o=el("option",null,c.nombre);o.value=c.nombre;$("city").appendChild(o)});
+  if(window.L&&cities.length){
     map=L.map("map",{scrollWheelZoom:false});
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
-    map.fitBounds(L.polygon(z.poligono).getBounds(),{padding:[20,20]});
-    drawZones();
   }
-  const m=await getText("data/meta.json");
-  if(m){try{const j=JSON.parse(m);$("meta").textContent="Datos del "+j.actualizado.split("-").reverse().join("/")+"."}catch(e){}}
+  if(cities.length)selectCity((cities.find(c=>c.nombre==="Madrid")||cities[0]).nombre);
+  const m=await getJSON("data/meta.json");
+  if(m&&m.actualizado)$("meta").textContent="Datos del "+m.actualizado.split("-").reverse().join("/")+".";
 }
 init();
 </script>

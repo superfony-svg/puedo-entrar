@@ -45,6 +45,16 @@ jobs:
         continue-on-error: true
         run: python scripts/build_data.py dgt.zip web/data
 
+      - name: Descargar y preparar las zonas de bajas emisiones (DGT NAP)
+        run: |
+          base=https://nap.dgt.es/datex2/v3/dgt/zbe/ControledZonePublication/
+          curl -fsSL --retry 3 "$base" -o nap.html
+          mkdir -p zbe
+          grep -o 'href="[^"]*\.xml"' nap.html | sed 's/href="//;s/"$//' | sort -u | while read f; do
+            curl -fsSL --retry 3 "$base$f" -o "zbe/$(basename "$f")" || echo "::warning::No se pudo descargar $f"
+          done
+          python scripts/build_zonas.py zbe web/data
+
       - name: Comprobar que hay datos
         run: |
           if [ ! -f web/data/meta.json ]; then
