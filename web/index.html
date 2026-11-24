@@ -63,7 +63,7 @@ footer{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap
 .row .st{width:12px;height:12px;border-radius:50%;flex:none}
 .row .nm{flex:1;min-width:0;font-weight:600}
 .row .tx{font-size:.85rem;color:var(--muted);text-align:right}
-.st.ok{background:var(--ok)} .st.no{background:var(--no)} .st.warn{background:var(--lB)} .st.unk{background:var(--lN)}
+.st.exc{background:var(--lE)} .st.ok{background:var(--ok)} .st.no{background:var(--no)} .st.warn{background:var(--lB)} .st.unk{background:var(--lN)}
 select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);width:100%}
 </style>
 </head>
@@ -81,6 +81,11 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
       <button class="btn" type="submit">Comprobar</button>
     </form>
     <p class="help">No guardamos las matrículas que escribes.</p>
+    <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">
+      <legend class="help" style="margin-bottom:6px">¿Tienes alguna excepción? (la DGT no la indica en su fichero)</legend>
+      <label><input type="checkbox" id="x-hist"> Mi vehículo es histórico</label>
+      <label><input type="checkbox" id="x-pmr"> Tengo tarjeta de estacionamiento para personas con movilidad reducida</label>
+    </fieldset>
     <details>
       <summary>Prefiero elegir mi etiqueta</summary>
       <div class="chips" id="chips" style="margin-top:10px"></div>
@@ -150,11 +155,13 @@ function zoneVerdict(z,lab){
   if(z.desde&&z.desde>new Date().toISOString().slice(0,10))return "ok";
   if(!z.permitidas)return "unk";
   if(z.permitidas.includes(lab))return "ok";
+  if(hasExc())return "exc";
   return z.solo_episodios?"warn":"no";
 }
-const RANK={no:3,warn:2,unk:1,ok:0};
+const RANK={no:4,warn:3,exc:2,unk:1,ok:0};
+const hasExc=()=>$("x-hist").checked||$("x-pmr").checked;
 function cityVerdict(c,lab){return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
-const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta"};
+const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta",exc:"Probablemente exento: confírmalo"};
 function horarioTxt(z){
   if(!z.horario||!z.horario.length)return "Consulta el horario en la web del ayuntamiento";
   return z.horario.map(h=>h.dias+(h.de?" de "+h.de+" a "+(h.a==="23:59"?"24:00":h.a):"")).join(" · ");
@@ -177,6 +184,8 @@ function showLabel(lab,title,sub){
     const res=cities.map(c=>({c,v:cityVerdict(c,lab)}));
     const ok=res.filter(r=>r.v==="ok").length;
     v.appendChild(el("p","summary","Puedes entrar siempre en "+ok+" de "+res.length+" ciudades con zona de bajas emisiones"));
+    if(hasExc())v.appendChild(el("p","help","Los vehículos históricos y los de personas con movilidad reducida están exentos en casi todas las zonas, pero cada ayuntamiento pone sus condiciones y a menudo hay que registrar la matrícula antes de entrar. Mira la web de cada ayuntamiento."));
+    else if(lab==="N"||lab==="B")v.appendChild(el("p","help","¿Es un vehículo histórico o tienes tarjeta de movilidad reducida? Márcalo arriba: en esos casos suele haber excepciones."));
     const bad=res.filter(r=>r.v!=="ok");
     if(bad.length){v.appendChild(el("p","help","Ojo en estas:"));const ul=el("div","list");bad.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));v.appendChild(ul)}
     const det=el("details");det.appendChild(el("summary",null,"Ver todas las ciudades"));
@@ -199,7 +208,7 @@ Object.entries(LABELS).forEach(([k,l])=>{const b=el("button","chip");b.type="but
 
 function inside([la,lo],poly){let r=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const[yi,xi]=poly[i],[yj,xj]=poly[j];if(((yi>la)!=(yj>la))&&(lo<(xj-xi)*(la-yi)/(yj-yi)+xi))r=!r}return r}
 const polys=id=>getJSON("data/zonas/"+id+".json");
-const colorOf=v=>getComputedStyle(document.documentElement).getPropertyValue({ok:"--ok",no:"--no",warn:"--lB",unk:"--lN"}[v]).trim();
+const colorOf=v=>getComputedStyle(document.documentElement).getPropertyValue({ok:"--ok",no:"--no",warn:"--lB",unk:"--lN",exc:"--lE"}[v]).trim();
 
 function selectCity(name){current=cities.find(c=>c.nombre===name)||cities[0];$("city").value=current.nombre;renderCity(true)}
 async function renderCity(fit){
@@ -207,6 +216,7 @@ async function renderCity(fit){
   const info=$("info");info.textContent="";
   const cv=$("cityverdict");cv.textContent="";
   if(label){const v=cityVerdict(current,label);const d=el("div","verdict "+(v==="ok"?"ok":v==="no"?"no":"warn"));
+    if(v==="exc")d.append(el("strong",null,current.nombre+": probablemente exento"),el("span",null,"Comprueba en la web del ayuntamiento si debes registrar tu matrícula antes de entrar."));else
     d.append(el("strong",null,current.nombre+": "+VTXT[v].toLowerCase()),el("span",null,label==="N"?"Para coches sin etiqueta.":"Con etiqueta "+LABELS[label].name+"."));cv.appendChild(d)}
   current.zonas.forEach(z=>{
     const add=(a,b,link)=>{const dt=el("dt",null,a),dd=el("dd");if(link){const x=el("a",null,b);x.href=link;x.target="_blank";x.rel="noopener";dd.appendChild(x)}else dd.textContent=b;info.append(dt,dd)};
@@ -242,7 +252,8 @@ async function updateWhere(){
   $("where").textContent={ok:"Estás dentro de la ZBE de "+nm+" y puedes estar aquí.",
     no:"Estás dentro de la ZBE de "+nm+" y con tu etiqueta no deberías estar aquí (revisa el horario).",
     warn:"Estás dentro de la ZBE de "+nm+". Solo tendrías problema si hay aviso de contaminación.",
-    unk:"Estás dentro de la ZBE de "+nm+". No tenemos datos de etiquetas: consulta la web del ayuntamiento."}[v];
+    unk:"Estás dentro de la ZBE de "+nm+". No tenemos datos de etiquetas: consulta la web del ayuntamiento.",
+    exc:"Estás dentro de la ZBE de "+nm+". Con tu excepción probablemente puedes estar aquí, si cumples las condiciones del ayuntamiento."}[v];
 }
 $("locate").addEventListener("click",()=>{
   if(!navigator.geolocation){$("where").textContent="Tu navegador no permite usar la ubicación.";return}
@@ -254,6 +265,7 @@ $("locate").addEventListener("click",()=>{
     {enableHighAccuracy:true,timeout:10000});
 });
 $("city").addEventListener("change",e=>selectCity(e.target.value));
+["x-hist","x-pmr"].forEach(id=>$(id).addEventListener("change",()=>{if(label)showLabel(label,$("ltitle").textContent,$("lsub").textContent)}));
 
 async function init(){
   zones=(await getJSON("data/zonas.json"))||[];
