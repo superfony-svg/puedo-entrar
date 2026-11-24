@@ -12,6 +12,14 @@ RECURRIR = {
     "desc": "Cómo recurrir una multa por entrar en una zona de bajas emisiones: plazos, pronto pago, motivos que funcionan, pasos y el caso de Málaga, donde se devuelven las multas.",
     "revisado": "2026-11-24",
     "cuerpo": """
+<section class="card"><h2>¿Cómo sé si tengo una multa?</h2>
+<ul>
+<li><strong>Por correo certificado</strong> a la dirección que tiene la DGT de tu coche. Si cambiaste de casa, actualízala en la DGT.</li>
+<li><strong>En la Dirección Electrónica Vial (DEV)</strong>, el buzón de multas de la DGT. Si te diste de alta, las multas llegan solo ahí y cuentan como recibidas aunque no las abras. Se mira en la sede de la DGT o en la app miDGT.</li>
+<li><strong>En el TESTRA</strong> (Tablón Edictal de Sanciones de Tráfico), que es donde se publican las multas que no se han podido entregar. Puedes buscar tu DNI o matrícula en la sede de la DGT.</li>
+</ul>
+<p><strong>Cuidado con las estafas:</strong> los ayuntamientos no dejan códigos QR en el parabrisas para pagar multas de la zona de bajas emisiones ni las cobran por SMS o WhatsApp con un enlace. Si te llega algo así, no pagues: entra tú en la sede electrónica del ayuntamiento.</p></section>
+
 <section class="card"><h2>Lo primero: ¿pagar o recurrir?</h2>
 <p>Tienes dos caminos y no puedes hacer los dos:</p>
 <ul>
@@ -54,6 +62,8 @@ RECURRIR = {
         ("¿Cuánto tiempo tengo para recurrir una multa de la ZBE?", "20 días naturales desde que recibes la notificación para presentar alegaciones. Si te las rechazan, 1 mes para el recurso de reposición."),
         ("¿Si recurro pierdo el descuento del 50 %?", "Sí. El descuento solo se aplica si pagas en los 20 días naturales; si presentas alegaciones y te las rechazan, pagarás la multa entera."),
         ("¿Qué motivos sirven para recurrir una multa de la ZBE?", "Que tu etiqueta sí estuviera permitida, tener una excepción o permiso, un error en la matrícula o los datos, falta de señalización, notificación fuera de plazo o que un tribunal haya anulado la norma."),
+        ("¿Cómo sé si tengo una multa de una zona de bajas emisiones?", "Llega por correo certificado o, si tienes la Dirección Electrónica Vial (DEV) de la DGT, solo ahí. Las que no se pueden entregar se publican en el TESTRA, que puedes consultar en la sede de la DGT."),
+        ("¿Me pueden cobrar la multa con un QR en el parabrisas o un SMS?", "No. Es una estafa conocida. Paga solo en la sede electrónica del ayuntamiento o con los datos de la notificación oficial."),
         ("¿Devuelven las multas de la ZBE de Málaga?", "Sí. Tras anular el TSJA la regulación, el Ayuntamiento dejó de multar el 14 de octubre de 2026, suspendió las multas en trámite y devolverá de oficio las pagadas."),
     ],
 }
@@ -207,6 +217,11 @@ FAQ = {
         ("¿Qué ciudades tienen que tener ZBE?", "La Ley de Cambio Climático obliga a los municipios de más de 50.000 habitantes y a los territorios insulares, y a los de más de 20.000 si tienen mala calidad del aire. Son unos 150 municipios; no todos la aplican aún."),
         ("¿Cuánto es la multa por entrar en una ZBE?", "Normalmente 200 €, o 100 € si pagas en 20 días naturales. La cuantía la fija cada ayuntamiento."),
         ("¿Cómo multan?", "Con cámaras que leen la matrícula a la entrada y dentro de la zona y la comparan con el registro de la DGT. La multa llega por correo o a la dirección electrónica vial (DEV)."),
+        ("¿Puedo entrar para ir a la ITV, al taller o al hospital?", "Depende de la ciudad. Muchas dan permisos para talleres, citas médicas o el hospital, pero casi siempre hay que avisar antes o en las 24 a 48 horas siguientes con un justificante. Míralo en la página de cada ciudad o en la web del ayuntamiento."),
+        ("¿Puedo parar un momento a recoger o dejar a alguien?", "En general, no: la cámara registra la entrada aunque estés un minuto. Algunas ciudades dan permisos para llevar a los niños al colegio o a personas con movilidad reducida, pero hay que pedirlos."),
+        ("¿Puede invitarme un familiar que vive dentro de la zona?", "En algunas ciudades, sí. En Bilbao, por ejemplo, cada vecino de la zona puede invitar hasta 6 coches al mes. En otras no existe esa opción. Míralo en la página de la ciudad."),
+        ("¿Tengo que llevar la pegatina puesta?", "Las cámaras leen la matrícula, no la pegatina, pero algunas ordenanzas obligan a llevarla en el parabrisas. Llevarla evita problemas con un agente."),
+        ("¿Qué hago si creo que mi coche tiene la etiqueta equivocada?", "La etiqueta sale de la fecha de matriculación, el combustible y la norma Euro de la ficha técnica. Si crees que está mal, pide la corrección a la DGT (sede electrónica o cita previa) con la ficha técnica, que debe indicar la norma Euro."),
         ("¿Qué pasa si mi coche no tiene etiqueta?", "Es el caso más restringido. En muchas ciudades no puede entrar, pero en otras sí o solo en ciertos horarios. Escribe tu matrícula en el buscador y verás ciudad por ciudad."),
         ("¿Cómo sé la etiqueta de mi coche?", "Escribe tu matrícula en ¿Puedo entrar?: mostramos la etiqueta oficial de la DGT, actualizada cada día, gratis y sin registro."),
         ("¿Los vecinos de la zona pueden entrar?", "Casi siempre los empadronados tienen excepciones o plazos más largos, pero cada ciudad pone sus condiciones. Un tribunal anuló la ZBE de Málaga precisamente por eximir a los coches por su domicilio."),
