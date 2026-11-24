@@ -98,7 +98,7 @@ footer{font-size:.8rem;color:var(--muted);display:flex;flex-direction:column;gap
   </section>
 
   <footer>
-    <span>Etiquetas: fichero oficial de la Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico), actualizado cada día. <span id="meta"></span> También puedes consultarlo gratis en la <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">sede de la DGT</a>.</span>
+    <span>Etiquetas: fichero oficial de la Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico), actualizado cada día. <span id="meta"></span> Mostramos la etiqueta tal como la asigna la DGT: solo traducimos su código (por ejemplo, 16MC) a su nombre (C). Esta información se puede consultar gratis en la <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">sede de la DGT</a>. <a href="https://sede.dgt.gob.es/es/contenido/derechos-sobre-la-propiedad-intelectual/index.html" target="_blank" rel="noopener">Condiciones de uso de la DGT</a>.</span>
     <span>Zonas: Punto de Acceso Nacional de la DGT (CC BY 4.0). Web no oficial e informativa: confirma siempre en la web de tu ayuntamiento.</span>
   </footer>
 </div>
@@ -153,7 +153,7 @@ f.addEventListener("submit",async e=>{e.preventDefault();
   const r=await lookup($("q").value);
   if(r.bad)return showLabel(null,"Matrícula incompleta","Escríbela entera, por ejemplo 1234BCD o M1234AB.");
   if(r.missingData)return showLabel(null,"Buscador en preparación","Estamos cargando los datos de la DGT. Mientras, elige tu etiqueta abajo.");
-  if(!r.code)return showLabel(null,"No encontramos "+r.plate,"Revisa que esté bien escrita. Si es correcta, lo más probable es que no tenga etiqueta.");
+  if(!r.code)return showLabel(null,"No encontramos "+r.plate,"No aparece en el fichero de la DGT. Revisa que esté bien escrita o consúltala en la sede de la DGT.");
   showLabel(r.code,lt(r.code),"Matrícula "+r.plate+" según la DGT");
 });
 Object.entries(LABELS).forEach(([k,l])=>{const b=document.createElement("button");b.type="button";b.className="chip";
