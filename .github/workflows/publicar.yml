@@ -1,0 +1,75 @@
+name: Actualizar datos y publicar la web
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "30 4 * * *" # cada día a las 4:30 UTC (5:30 en España en invierno)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Descargar el fichero de etiquetas de la DGT
+        id: dgt
+        continue-on-error: true
+        run: |
+          for i in 1 2 3; do
+            curl -fSL --retry 3 --max-time 900 \
+              -A "Mozilla/5.0 (compatible; puedo-entrar/1.0)" \
+              -o dgt.zip https://www.dgt.es/microdatos/salida/distintivoAmbiental/export_dist_ambiental.zip && break
+            sleep 30
+          done
+          ls -lh dgt.zip
+          unzip -l dgt.zip
+
+      - name: Preparar los datos para la web
+        id: datos
+        if: steps.dgt.outcome == 'success'
+        continue-on-error: true
+        run: python scripts/build_data.py dgt.zip web/data
+
+      - name: Comprobar que hay datos
+        run: |
+          if [ ! -f web/data/meta.json ]; then
+            echo "::warning::No se han podido preparar los datos de la DGT"
+            if [ "${{ github.event_name }}" = "schedule" ]; then
+              echo "En la actualización diaria no publicamos sin datos, para no borrar los de ayer."
+              exit 1
+            fi
+          fi
+          du -sh web
+          find web -type f | wc -l
+
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
