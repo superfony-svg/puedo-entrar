@@ -115,7 +115,7 @@ FOOTER = ('<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Je
 
 
 def guias_links(raiz):
-    return "".join(f'<a href="{raiz}guias/{g["slug"]}/">{e(g["titulo"])}</a>' for g in GUIAS)
+    return f'<a href="{raiz}ciudades-abiertas/"><strong>Ciudades más abiertas al visitante</strong></a>' + "".join(f'<a href="{raiz}guias/{g["slug"]}/">{e(g["titulo"])}</a>' for g in GUIAS)
 
 
 def cabecera(titulo, desc, url, ld):
@@ -167,6 +167,73 @@ def indice_guias():
             + f"""<p class="muted"><a href="../">¿Puedo entrar?</a> › Guías</p>
 <h1>Guías sobre zonas de bajas emisiones</h1>
 {items}
+{FOOTER}
+</div></body></html>
+""")
+
+
+def abierta(zs):
+    """Clasifica una ciudad según lo fácil que es entrar con un coche de fuera.
+    Devuelve (grupo, motivo). Grupo 0 = más abierta. Solo usa datos publicados."""
+    hoy = date.today().isoformat()
+    activas = [z for z in zs if z.get("estado") in (None, "", "active") and not (z.get("desde") and z["desde"] > hoy)]
+    if not activas:
+        if any(z.get("aviso") for z in zs):
+            return 0, "La zona no se aplica ahora mismo (anulada o suspendida)."
+        return 0, "La zona aún no se aplica."
+    if all(z.get("solo_episodios") for z in activas):
+        return 0, "Solo restringe el tráfico en episodios de contaminación alta."
+    perm = [z.get("permitidas") for z in activas]
+    if any(p is None for p in perm):
+        return 9, "Los datos publicados no son claros."
+    comunes = [k for k in TODAS if all(k in p for p in perm)]
+    def limitado(z):
+        h = z.get("horario") or []
+        return bool(h) and not any(x.get("de") == "00:00" and x.get("a") in ("23:59", "24:00") for x in h)
+    horas = all(limitado(z) for z in activas)
+    if "N" in comunes:
+        return 0, "Pueden entrar todos los coches."
+    if "B" in comunes:
+        return 1, "Solo cierra a los coches sin etiqueta" + (", y solo en algunas horas." if horas else ".")
+    if "C" in comunes:
+        return 2, "Cierra a los coches sin etiqueta y con etiqueta B" + (", pero solo en algunas horas." if horas else ".")
+    return 3, "Solo pueden entrar los coches ECO y Cero" + (", y solo en algunas horas." if horas else ".")
+
+
+GRUPOS = [
+    ("Abiertas: puedes entrar con cualquier coche", "Ahora mismo no multan a nadie por su etiqueta, o solo restringen en episodios de contaminación."),
+    ("Muy accesibles: solo cierran a los coches sin etiqueta", "Si tu coche tiene cualquier etiqueta (B, C, ECO o Cero), entras."),
+    ("Accesibles con etiqueta C o mejor", "Los coches con etiqueta B o sin etiqueta no pueden entrar en la zona."),
+    ("Más exigentes", "Solo entran los coches ECO y Cero emisiones."),
+]
+
+
+def pagina_ranking(by):
+    grupos = {}
+    for c, zs in by.items():
+        g, motivo = abierta(zs)
+        visit = next((z["excepciones"].get("visitantes") for z in zs if z.get("excepciones") and z["excepciones"].get("visitantes")), None)
+        grupos.setdefault(g, []).append((c, motivo, visit))
+    bloques = []
+    for i, (tit, expl) in enumerate(GRUPOS):
+        filas = sorted(grupos.get(i, []), key=lambda x: (x[2] is None, slug(x[0])))
+        if not filas:
+            continue
+        li = "".join(f'<li><a href="../zbe/{slug(c)}/">{e(c)}</a>: {e(m)}' + (f' <strong>Para visitantes:</strong> {e(v)}' if v else "") + "</li>" for c, m, v in filas)
+        bloques.append(f'<section class="card"><h2>{e(tit)} ({len(filas)})</h2><p class="muted">{e(expl)}</p><ul>{li}</ul></section>')
+    dudosas = sorted(grupos.get(9, []), key=lambda x: slug(x[0]))
+    if dudosas:
+        bloques.append('<section class="card"><h2>Pendientes de comprobar</h2><p class="muted">Los datos publicados de estas ciudades no son claros. No las clasificamos hasta comprobar su ordenanza.</p><p class="guias">'
+                       + "".join(f'<a href="../zbe/{slug(c)}/">{e(c)}</a>' for c, _, _ in dudosas) + "</p></section>")
+    n = sum(len(grupos.get(i, [])) for i in range(len(GRUPOS)))
+    titulo = "Ciudades más abiertas al visitante: dónde puedes entrar sin miedo a multas"
+    desc = "Clasificación de las ciudades españolas con zona de bajas emisiones según lo fácil que es entrar con un coche de fuera. Hecha con datos oficiales y actualizada cada día."
+    return (cabecera(titulo, desc, f"{BASE}ciudades-abiertas/", faq_ld([]))
+            + f"""<p class="muted"><a href="../">¿Puedo entrar?</a> › Ciudades más abiertas</p>
+<h1>Ciudades más abiertas al visitante</h1>
+<p>Muchas personas viajan a otras ciudades por trabajo, turismo o para ver a la familia. Aquí ordenamos {n} ciudades con zona de bajas emisiones según lo fácil que se lo ponen a un coche de fuera, de más abierta a más exigente.</p>
+<p class="muted">Cómo lo hacemos: solo con los datos publicados por la DGT, OpenStreetMap y los ayuntamientos, sin opiniones. Se actualiza cada día. Si una ciudad tiene permisos especiales para visitantes, lo indicamos. Escribe tu matrícula en <a href="../">el buscador</a> para ver tu caso exacto.</p>
+{"".join(bloques)}
 {FOOTER}
 </div></body></html>
 """)
@@ -259,6 +326,10 @@ def main(web):
         with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
             f.write(pagina(c, by[c], ciudades))
         urls.append(f"{BASE}zbe/{slug(c)}/")
+    os.makedirs(os.path.join(web, "ciudades-abiertas"), exist_ok=True)
+    with open(os.path.join(web, "ciudades-abiertas", "index.html"), "w", encoding="utf-8") as f:
+        f.write(pagina_ranking(by))
+    urls.append(f"{BASE}ciudades-abiertas/")
     os.makedirs(os.path.join(web, "guias"), exist_ok=True)
     with open(os.path.join(web, "guias", "index.html"), "w", encoding="utf-8") as f:
         f.write(indice_guias())

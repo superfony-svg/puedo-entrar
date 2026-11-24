@@ -11,12 +11,12 @@ Web gratuita que, a partir de la matrícula, dice la etiqueta ambiental de la DG
 ## Ficheros que se editan a mano (en `scripts/`)
 
 - `correcciones.json`: corrige datos de la DGT por id de zona (por ejemplo, `permitidas`).
-- `excepciones.json`: norma de cada ciudad para históricos (`historicos`), movilidad reducida (`pmr`), `fuente` y `revisado`. Clave: nombre de la ciudad.
+- `excepciones.json`: norma de cada ciudad para históricos (`historicos`), movilidad reducida (`pmr`), facilidades para visitantes (`visitantes`, opcional: sale en la página «Ciudades más abiertas»), `fuente` y `revisado`. Clave: nombre de la ciudad.
 - `osm_zonas.json`: zonas de OpenStreetMap para ciudades que la DGT no publica.
 - `avisos.json`: avisos por ciudad que cambian lo de la DGT (`aviso`, `fuente`, `estado`; un `estado` distinto de `active` hace que la web diga que se puede entrar). Ejemplo: Málaga, zona anulada.
 - `guias.py`: texto de las guías (`web/guias/`).
 
-`scripts/build_paginas.py` genera las páginas de ciudad, las guías, el mapa del sitio y aplica `avisos.json`.
+`scripts/build_paginas.py` genera las páginas de ciudad, las guías, la clasificación `web/ciudades-abiertas/`, el mapa del sitio y aplica `avisos.json`.
 
 ## Fuentes
 
