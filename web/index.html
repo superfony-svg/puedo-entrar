@@ -207,6 +207,29 @@ const hasExc=()=>$("x-hist").checked||$("x-pmr").checked;
 const esVecino=z=>!!($("x-res").value&&$("x-res").value===z.ciudad&&z.excepciones&&z.excepciones.residentes);
 function cityVerdict(c,lab){if(c.pend)return "pend";return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
 const VTXT=new Proxy({},{get:(_,k)=>t("v_"+String(k))});
+// «¿Y ahora mismo?»: compara la hora de España (no la del móvil) con el horario publicado.
+const DSEM=["domingo","lunes","martes","miércoles","jueves","viernes","sábado"];
+function diasDe(txt){const x=(txt||"").toLowerCase();
+  if(/todos los d/.test(x))return{d:[0,1,2,3,4,5,6]};
+  if(/^d[ií]as laborables/.test(x))return{d:[1,2,3,4,5],dudoso:true};
+  if(/^festivos/.test(x))return{d:[0],dudoso:true};
+  if(/^s[aá]bados?$/.test(x))return{d:[6]};if(/^domingos?$/.test(x))return{d:[0]};
+  const m=x.match(/^(lunes|martes|miércoles|jueves|viernes|sábado|domingo)(?: a (lunes|martes|miércoles|jueves|viernes|sábado|domingo))?$/);
+  if(!m)return null;const a=DSEM.indexOf(m[1]),b=m[2]?DSEM.indexOf(m[2]):a,d=[];for(let i=a;;i=(i+1)%7){d.push(i);if(i===b)break}return{d}}
+function horaEspana(){const f=new Intl.DateTimeFormat("en-GB",{timeZone:"Europe/Madrid",weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date());
+  const g=k=>f.find(p=>p.type===k).value;return{dia:["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].indexOf(g("weekday")),min:+g("hour")*60+ +g("minute"),txt:g("hour")+":"+g("minute")}}
+const aMin=h=>h?+h.slice(0,2)*60+ +h.slice(3,5):null;
+function ahoraMismo(z){
+  if(!z.horario||!z.horario.length||z.solo_episodios||z.aviso||(z.estado&&z.estado!=="active"))return null;
+  const tramos=[];let dudoso=false;
+  for(const h of z.horario){const dd=diasDe(h.dias);if(!dd)return null;dudoso=dudoso||!!dd.dudoso;
+    const de=h.de?aMin(h.de):0,a=h.a?aMin(h.a==="23:59"?"24:00":h.a):1440;if(de===null||a===null||a<=de)return null;dd.d.forEach(d=>tramos.push({d,de,a}))}
+  const n=horaEspana();const act=tramos.find(t=>t.d===n.dia&&n.min>=t.de&&n.min<t.a);
+  const hh=m=>String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+  if(act)return{activa:true,dudoso,txt:"Ahora ("+n.txt+") la restricción está en vigor"+(act.a<1440?" hasta las "+hh(act.a):"")+"."};
+  for(let k=0;k<8;k++){const d=(n.dia+k)%7;const sig=tramos.filter(t=>t.d===d&&(k>0||t.de>n.min)).sort((x,y)=>x.de-y.de)[0];
+    if(sig)return{activa:false,dudoso,txt:"Ahora ("+n.txt+"), según el horario publicado, la restricción no se aplica. Vuelve a aplicarse "+(k===0?"hoy":k===1?"mañana":"el "+DSEM[d])+" a las "+hh(sig.de)+"."+(dudoso?" Ojo: en festivos el horario puede cambiar.":"")}}
+  return null}
 function horarioTxt(z){
   if(!z.horario||!z.horario.length)return "Consulta el horario en la web del ayuntamiento";
   return z.horario.map(h=>h.dias+(h.de?" de "+h.de+" a "+(h.a==="23:59"?"24:00":h.a):"")).join(" · ");
@@ -285,7 +308,9 @@ async function renderCity(fit){
   const cv=$("cityverdict");cv.textContent="";
   if(label){const v=cityVerdict(current,label);const d=el("div","verdict "+(v==="ok"?"ok":v==="no"?"no":"warn"));
     if(v==="exc")d.append(el("strong",null,current.nombre+": puede que tengas excepción"),el("span",null,"Comprueba en la web del ayuntamiento si debes registrar tu matrícula antes de entrar."));else
-    d.append(el("strong",null,current.nombre+": "+VTXT[v].toLowerCase()),el("span",null,label==="N"?"Para coches sin etiqueta.":"Con etiqueta "+LABELS[label].name+"."));cv.appendChild(d)}
+    d.append(el("strong",null,current.nombre+": "+VTXT[v].toLowerCase()),el("span",null,label==="N"?"Para coches sin etiqueta.":"Con etiqueta "+LABELS[label].name+"."));
+    if(v==="no"&&current.zonas.length===1){const am=ahoraMismo(current.zonas[0]);if(am)d.append(el("span",null,am.txt))}
+    cv.appendChild(d)}
   if(current.pend){const p=current.pend,dl=(a,b)=>info.append(el("dt",null,a),el("dd",null,b));
     dl("Estado",{vigor:"Según la prensa (marzo de 2026), la zona ya está en vigor. Aún no tenemos sus normas.",tramite:"Según la prensa (marzo de 2026), la zona está en trámite.",pendiente:"Según la prensa (marzo de 2026), aún no había empezado los trámites."}[p.estado_prensa]||"Obligada por ley a tener zona de bajas emisiones. Aún no hemos comprobado si está en vigor.");
     dl("Qué hacer","Consulta en la web del ayuntamiento qué etiquetas pueden entrar antes de ir.");
@@ -301,6 +326,7 @@ async function renderCity(fit){
     if(z.solo_episodios)add("Cuándo se aplica","Solo durante episodios de contaminación");
     if(z.sin_mapa)add("Mapa","Aún no tenemos el contorno exacto de la zona: guíate por las señales de entrada.");
     add("Horario",horarioTxt(z));
+    {const am=ahoraMismo(z);if(am)add("Ahora mismo",am.txt)}
     if(z.desde)add("En vigor desde",z.desde.split("-").reverse().join("/"));
     if(z.descripcion&&z.descripcion.length>25)add("Detalles",z.descripcion);
     if(z.excepciones&&!z.zona||z.excepciones&&z===current.zonas[0]){add("Vehículos históricos",z.excepciones.historicos);add("Movilidad reducida",z.excepciones.pmr);if(z.excepciones.residentes)add("Coches de vecinos",z.excepciones.residentes);if(z.excepciones.fuente)add("Norma","Ordenanza municipal",z.excepciones.fuente)}
