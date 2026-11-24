@@ -204,7 +204,7 @@ function zoneVerdict(z,lab){
 }
 const RANK={no:4,warn:3,exc:2,unk:1,pend:1,ok:0};
 const hasExc=()=>$("x-hist").checked||$("x-pmr").checked;
-const esVecino=z=>!!($("x-res").value&&$("x-res").value===z.ciudad&&z.excepciones&&z.excepciones.residentes);
+const esVecino=z=>!!($("x-res").value&&$("x-res").value===z.ciudad&&z.excepciones&&z.excepciones.residentes&&z.excepciones.residentes_exentos!==false);
 function cityVerdict(c,lab){if(c.pend)return "pend";return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
 const VTXT=new Proxy({},{get:(_,k)=>t("v_"+String(k))});
 // «¿Y ahora mismo?»: compara la hora de España (no la del móvil) con el horario publicado.
@@ -329,7 +329,7 @@ async function renderCity(fit){
     {const am=ahoraMismo(z);if(am)add("Ahora mismo",am.txt)}
     if(z.desde)add("En vigor desde",z.desde.split("-").reverse().join("/"));
     if(z.descripcion&&z.descripcion.length>25)add("Detalles",z.descripcion);
-    if(z.excepciones&&!z.zona||z.excepciones&&z===current.zonas[0]){add("Vehículos históricos",z.excepciones.historicos);add("Movilidad reducida",z.excepciones.pmr);if(z.excepciones.residentes)add("Coches de vecinos",z.excepciones.residentes);if(z.excepciones.fuente)add("Norma","Ordenanza municipal",z.excepciones.fuente)}
+    if(z.excepciones&&!z.zona||z.excepciones&&z===current.zonas[0]){add("Vehículos históricos",z.excepciones.historicos);add("Movilidad reducida",z.excepciones.pmr);if(z.excepciones.residentes)add("Coches de vecinos",z.excepciones.residentes);if(z.excepciones.visitantes)add("Visitantes",z.excepciones.visitantes,null);if(z.excepciones.tramite)add("Permiso","Hacer el trámite",z.excepciones.tramite);if(z.excepciones.fuente)add("Fuente",/race\.es/.test(z.excepciones.fuente)?"Resumen del RACE":"Ordenanza o web del ayuntamiento",z.excepciones.fuente)}
     else if(z===current.zonas[0])add("Históricos y movilidad reducida","Aún no hemos revisado la norma de esta ciudad: consúltala en la web del ayuntamiento.");
     if(z.info_url&&/^https?:\/\//.test(z.info_url))add("Más info","Web del ayuntamiento",z.info_url);
     {const f=fiab(z);add("Fuente de este dato",(f.ok?"✓ ":"⚠ ")+f.txt);if(z.fuente_datos&&/^https?:\/\//.test(z.fuente_datos))add("Resumen consultado","Abrir",z.fuente_datos)}

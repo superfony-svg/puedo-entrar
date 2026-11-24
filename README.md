@@ -11,7 +11,7 @@ Web gratuita que, a partir de la matrícula, dice la etiqueta ambiental de la DG
 ## Ficheros que se editan a mano (en `scripts/`)
 
 - `correcciones.json`: corrige datos de la DGT por id de zona (por ejemplo, `permitidas`).
-- `excepciones.json`: norma de cada ciudad para históricos (`historicos`), movilidad reducida (`pmr`), excepción para coches de vecinos (`residentes`, opcional: la web la aplica si el usuario dice que su coche paga el impuesto de circulación en esa ciudad), facilidades para visitantes (`visitantes`, opcional: sale en la página «Ciudades más abiertas»), `fuente` y `revisado`. Clave: nombre de la ciudad.
+- `excepciones.json`: norma de cada ciudad para históricos (`historicos`), movilidad reducida (`pmr`), excepción para coches de vecinos (`residentes`, opcional: la web la aplica si el usuario dice que su coche paga el impuesto de circulación en esa ciudad), `residentes_exentos: false` si pagar el impuesto en la ciudad NO da permiso (entonces `residentes` solo se muestra como texto), enlace al trámite de permiso (`tramite`, opcional), facilidades para visitantes (`visitantes`, opcional: sale en la página «Ciudades más abiertas»), `fuente` y `revisado`. Clave: nombre de la ciudad.
 - `osm_zonas.json`: zonas de OpenStreetMap para ciudades que la DGT no publica.
 - `avisos.json`: avisos por ciudad que cambian lo de la DGT (`aviso`, `fuente`, `estado`; un `estado` distinto de `active` hace que la web diga que se puede entrar). Ejemplo: Málaga, zona anulada.
 - `manuales.json`: zonas puestas a mano para ciudades que no están ni en la DGT ni en OpenStreetMap (ejemplo: Almería). Sin contorno: `bbox` aproximado solo para centrar el mapa.

@@ -459,7 +459,8 @@ def si_no_puedes(ciudad, exc):
     """Qué hacer si tu coche no puede entrar: permiso de visitante y aparcamientos fuera de la zona."""
     partes = []
     if exc and exc.get("visitantes"):
-        partes.append(f'<h3>Permiso para visitantes</h3><p>{e(exc["visitantes"])}</p>')
+        tr = f' <a href="{e(exc["tramite"])}" target="_blank" rel="noopener">Hacer el trámite</a>' if exc.get("tramite") else ""
+        partes.append(f'<h3>Permiso para visitantes</h3><p>{e(exc["visitantes"])}{tr}</p>')
     ps = PARKINGS.get(ciudad) or []
     if ps:
         li = []
@@ -494,7 +495,7 @@ def pagina(ciudad, zs, todas):
         excb = (f'<section class="card"><h2>Excepciones</h2><dl><dt>Vehículos históricos</dt><dd>{e(exc.get("historicos"))}</dd>'
                 f'<dt>Movilidad reducida</dt><dd>{e(exc.get("pmr"))}</dd>'
                 + (f'<dt>Coches de vecinos</dt><dd>{e(exc["residentes"])}</dd>' if exc.get("residentes") else "")
-                + (f'<dt>Norma</dt><dd><a href="{e(exc["fuente"])}" target="_blank" rel="noopener">Ordenanza municipal</a></dd>' if exc.get("fuente") else "")
+                + (f'<dt>Fuente</dt><dd><a href="{e(exc["fuente"])}" target="_blank" rel="noopener">{"Ordenanza o web del ayuntamiento" if "race.es" not in exc["fuente"] else "Resumen del RACE"}</a> <span class="muted">(revisado el {fecha(exc.get("revisado", ""))})</span></dd>' if exc.get("fuente") else "")
                 + "</dl></section>")
     else:
         excb = ('<section class="card"><h2>Excepciones</h2><p class="muted">Los vehículos históricos, los de personas con movilidad reducida, '

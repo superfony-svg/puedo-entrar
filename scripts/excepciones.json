@@ -18,5 +18,32 @@
     "fuente": "https://almeriaciudad.es/empleo-publico/wp-content/archivos/sites/22/2023/10/texto-de-la-ordenanza.pdf",
     "revisado": "2026-11-24",
     "residentes": "Los coches sin etiqueta dados de alta en Almería (los que pagan aquí el impuesto de circulación) pueden entrar durante un periodo transitorio de tres años. Confirma en el Ayuntamiento si sigue en vigor."
+  },
+  "Zaragoza": {
+    "historicos": "Pueden entrar los vehículos clasificados como históricos por la DGT, registrándolos antes en el registro municipal de la zona. La autorización no caduca.",
+    "pmr": "Pueden entrar mientras tengan la tarjeta de movilidad reducida en vigor, colocada en el parabrisas, registrando antes el vehículo.",
+    "residentes": "Pagar aquí el impuesto no da permiso. Los coches sin etiqueta pueden entrar si tienen plaza de garaje o local dentro de la zona, o tarjeta de residente de estacionamiento regulado de la zona, con autorización anual que se renueva.",
+    "visitantes": "Los coches sin etiqueta pueden entrar hasta 8 veces al mes registrándose antes en el registro municipal de la ZBE (por internet la autorización es inmediata).",
+    "fuente": "https://zaragoza.es/sede/portal/movilidad/bajas-emisiones/vehiculos",
+    "tramite": "https://www.zaragoza.es/sede/servicio/tramite/42155",
+    "revisado": "2026-11-24",
+    "residentes_exentos": false
+  },
+  "València": {
+    "historicos": "Exentos si están matriculados como históricos en la DGT, con un máximo de 96 accesos al año (preguntas frecuentes del Ayuntamiento, enero de 2026).",
+    "pmr": "Pueden entrar presentando la documentación que acredite la tarjeta de estacionamiento en vigor.",
+    "residentes": "Según las preguntas frecuentes del Ayuntamiento, pagar aquí el impuesto no da permiso por sí solo. Hay excepciones para actividad económica, familias numerosas, familias con hijos menores de 3 años, embarazadas y movilidad reducida temporal.",
+    "visitantes": "Los turismos y motos sin etiqueta podrán entrar 48 días al año (cada acceso vale de 00:00 a 23:59), avisando antes en un portal web que el Ayuntamiento aún no ha abierto.",
+    "fuente": "https://www.valencia.es/documents/d/guest/preguntas-frecuentes-zbe_enero-2026-pdf",
+    "revisado": "2026-11-24",
+    "residentes_exentos": false
+  },
+  "Madrid": {
+    "historicos": "Pueden circular sin etiqueta por la zona hasta un máximo de 96 días (resumen del RACE de noviembre de 2026).",
+    "pmr": "Pueden circular si el vehículo está registrado en el sistema de gestión de accesos de la ZBE de Madrid.",
+    "residentes": "Los coches sin etiqueta domiciliados en Madrid y que pagan aquí el impuesto de circulación pueden seguir circulando, salvo en episodios de contaminación por dióxido de nitrógeno (resumen del RACE; confírmalo en madrid.es).",
+    "visitantes": "Los coches sin etiqueta de fuera de Madrid no pueden entrar, salvo excepciones: históricos, movilidad reducida, emergencias y autorizaciones excepcionales (por ejemplo, ir al hospital por una enfermedad grave).",
+    "fuente": "https://www.race.es/coche-sin-etiqueta-madrid",
+    "revisado": "2026-11-24"
   }
 }
