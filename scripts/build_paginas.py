@@ -288,6 +288,7 @@ def pagina(ciudad, zs, todas):
     if exc:
         excb = (f'<section class="card"><h2>Excepciones</h2><dl><dt>Vehículos históricos</dt><dd>{e(exc.get("historicos"))}</dd>'
                 f'<dt>Movilidad reducida</dt><dd>{e(exc.get("pmr"))}</dd>'
+                + (f'<dt>Coches de vecinos</dt><dd>{e(exc["residentes"])}</dd>' if exc.get("residentes") else "")
                 + (f'<dt>Norma</dt><dd><a href="{e(exc["fuente"])}" target="_blank" rel="noopener">Ordenanza municipal</a></dd>' if exc.get("fuente") else "")
                 + "</dl></section>")
     else:

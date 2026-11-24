@@ -92,6 +92,8 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
       <legend class="help" style="margin-bottom:6px">¿Tienes alguna excepción? (la DGT no la indica en su fichero)</legend>
       <label><input type="checkbox" id="x-hist"> Mi vehículo es histórico</label>
       <label><input type="checkbox" id="x-pmr"> Tengo tarjeta de estacionamiento para personas con movilidad reducida</label>
+      <label class="help" for="x-res" style="margin-top:4px">Opcional: ¿en qué municipio paga tu coche el impuesto de circulación? Algunas ciudades dejan entrar a los coches de sus vecinos.</label>
+      <select id="x-res"><option value="">No lo sé o prefiero no decirlo</option></select>
     </fieldset>
     <details>
       <summary>Prefiero elegir mi etiqueta</summary>
@@ -173,10 +175,12 @@ function zoneVerdict(z,lab){
   if(!z.permitidas)return "unk";
   if(z.permitidas.includes(lab))return "ok";
   if(hasExc())return "exc";
+  if(esVecino(z))return "exc";
   return z.solo_episodios?"warn":"no";
 }
 const RANK={no:4,warn:3,exc:2,unk:1,ok:0};
 const hasExc=()=>$("x-hist").checked||$("x-pmr").checked;
+const esVecino=z=>!!($("x-res").value&&$("x-res").value===z.ciudad&&z.excepciones&&z.excepciones.residentes);
 function cityVerdict(c,lab){return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
 const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta",exc:"Puede que tengas excepción: compruébalo"};
 function horarioTxt(z){
@@ -202,7 +206,7 @@ function showLabel(lab,title,sub){
     const ok=res.filter(r=>r.v==="ok").length;
     v.appendChild(el("p","summary","Puedes entrar siempre en "+ok+" de "+res.length+" ciudades con zona de bajas emisiones"));
     if(hasExc())v.appendChild(el("p","help","Muchos ayuntamientos dan excepciones o permisos a los vehículos históricos y a los de personas con movilidad reducida, pero las condiciones cambian mucho de una ciudad a otra (por ejemplo, en Barcelona los históricos solo pueden entrar 24 días al año con permiso) y casi siempre hay que registrar la matrícula antes. Toca una ciudad para ver su norma."));
-    else if(lab==="N"||lab==="B")v.appendChild(el("p","help","¿Es un vehículo histórico o tienes tarjeta de movilidad reducida? Márcalo arriba: en esos casos suele haber excepciones."));
+    else if(lab==="N"||lab==="B")v.appendChild(el("p","help","¿Es un vehículo histórico, tienes tarjeta de movilidad reducida o tu coche paga el impuesto en alguna de estas ciudades? Indícalo arriba: en esos casos suele haber excepciones."));
     const bad=res.filter(r=>r.v!=="ok");
     if(bad.length){v.appendChild(el("p","help","Ojo en estas:"));const ul=el("div","list");bad.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));v.appendChild(ul)}
     const det=el("details");det.appendChild(el("summary",null,"Ver todas las ciudades"));
@@ -247,7 +251,7 @@ async function renderCity(fit){
     add("Horario",horarioTxt(z));
     if(z.desde)add("En vigor desde",z.desde.split("-").reverse().join("/"));
     if(z.descripcion&&z.descripcion.length>25)add("Detalles",z.descripcion);
-    if(z.excepciones&&!z.zona||z.excepciones&&z===current.zonas[0]){add("Vehículos históricos",z.excepciones.historicos);add("Movilidad reducida",z.excepciones.pmr);if(z.excepciones.fuente)add("Norma","Ordenanza municipal",z.excepciones.fuente)}
+    if(z.excepciones&&!z.zona||z.excepciones&&z===current.zonas[0]){add("Vehículos históricos",z.excepciones.historicos);add("Movilidad reducida",z.excepciones.pmr);if(z.excepciones.residentes)add("Coches de vecinos",z.excepciones.residentes);if(z.excepciones.fuente)add("Norma","Ordenanza municipal",z.excepciones.fuente)}
     else if(z===current.zonas[0])add("Históricos y movilidad reducida","Aún no hemos revisado la norma de esta ciudad: consúltala en la web del ayuntamiento.");
     if(z.info_url&&/^https?:\/\//.test(z.info_url))add("Más info","Web del ayuntamiento",z.info_url);
   });
@@ -288,13 +292,17 @@ $("locate").addEventListener("click",()=>{
     {enableHighAccuracy:true,timeout:10000});
 });
 $("city").addEventListener("change",e=>selectCity(e.target.value));
-["x-hist","x-pmr"].forEach(id=>$(id).addEventListener("change",()=>{if(label)showLabel(label,$("ltitle").textContent,$("lsub").textContent)}));
+["x-hist","x-pmr","x-res"].forEach(id=>$(id).addEventListener("change",()=>{
+  if(id==="x-res")try{localStorage.setItem("puedo-res",$("x-res").value)}catch(e){}
+  if(label)showLabel(label,$("ltitle").textContent,$("lsub").textContent);else renderCity(false)}));
 
 async function init(){
   zones=(await getJSON("data/zonas.json"))||[];
   const by={};zones.forEach(z=>{(by[z.ciudad]=by[z.ciudad]||{nombre:z.ciudad,zonas:[]}).zonas.push(z)});
   cities=Object.values(by).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
-  cities.forEach(c=>{const o=el("option",null,c.nombre);o.value=c.nombre;$("city").appendChild(o)});
+  cities.forEach(c=>{const o=el("option",null,c.nombre);o.value=c.nombre;$("city").appendChild(o);
+    const r=el("option",null,c.nombre);r.value=c.nombre;$("x-res").appendChild(r)});
+  try{const r=localStorage.getItem("puedo-res");if(r&&cities.some(c=>c.nombre===r))$("x-res").value=r}catch(e){}
   if(window.L&&cities.length){
     map=L.map("map",{scrollWheelZoom:false});
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
