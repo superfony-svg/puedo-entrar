@@ -79,29 +79,32 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
 </head>
 <body>
 <div class="wrap">
-  <nav class="menu" aria-label="Menú"><a href="./">Inicio</a><a href="./#h-ciu">Ciudades</a><a href="./ciudades-abiertas/">Ciudades abiertas</a><a href="./guias/">Guías</a><a href="./guias/preguntas-frecuentes/">Preguntas</a><a href="./aviso-legal/">Aviso legal</a></nav>
+  <nav class="menu" aria-label="Menú"><a href="./" data-t="nav_home">Inicio</a><a href="./#h-ciu" data-t="nav_cities">Ciudades</a><a href="./ciudades-abiertas/" data-t="nav_open">Ciudades abiertas</a><a href="./guias/" data-t="nav_guides">Guías</a><a href="./guias/preguntas-frecuentes/" data-t="nav_faq">Preguntas</a><a href="./aviso-legal/" data-t="nav_legal">Aviso legal</a><select id="lang" aria-label="Idioma / Language" style="width:auto;padding:2px 6px;font-size:.85rem;margin-left:auto"></select></nav>
   <header>
-    <h1>¿Puedo entrar con mi coche?</h1>
-    <p class="sub">Escribe tu matrícula y te decimos tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar.</p>
-    <div id="install" hidden style="margin-top:10px"><button class="btn ghost" type="button" id="installbtn">Instalar como app en el móvil</button> <span class="help" id="installhelp"></span></div>
+    <h1 data-t="h1">¿Puedo entrar con mi coche?</h1>
+    <p class="sub" data-t="sub">Escribe tu matrícula y te decimos tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar.</p>
+    <div id="install" hidden style="margin-top:10px"><button class="btn ghost" type="button" id="installbtn" data-t="install">Instalar como app en el móvil</button> <span class="help" id="installhelp"></span></div>
   </header>
 
   <section class="card" aria-labelledby="h-mat">
-    <h2 id="h-mat">Tu matrícula</h2>
+    <h2 id="h-mat" data-t="h_plate">Tu matrícula</h2>
+    <p class="help" id="langnote" hidden></p>
     <form id="f" autocomplete="off">
-      <label class="plate" for="q"><span class="eu">E</span><input id="q" name="q" inputmode="text" maxlength="10" placeholder="1234BCD" aria-label="Matrícula" required></label>
-      <button class="btn" type="submit">Comprobar</button>
+      <label class="plate" for="q"><span class="eu">E</span><input id="q" name="q" inputmode="text" maxlength="10" placeholder="1234BCD" aria-label="Matrícula"></label>
+      <input class="txt" id="dest" list="citylist" data-tph="dest_city" placeholder="¿A dónde vas? (opcional) Ej.: Granada" aria-label="Ciudad de destino" autocomplete="off" style="flex:1 1 100%">
+      <datalist id="citylist"></datalist>
+      <button class="btn" type="submit" data-t="check" style="flex:1 1 100%">Comprobar</button>
     </form>
-    <p class="help">No guardamos las matrículas que escribes.</p>
+    <p class="help" data-t="nostore">No guardamos las matrículas que escribes.</p>
     <fieldset style="border:0;padding:0;margin:0;display:flex;flex-direction:column;gap:6px">
-      <legend class="help" style="margin-bottom:6px">¿Tienes alguna excepción? (la DGT no la indica en su fichero)</legend>
-      <label><input type="checkbox" id="x-hist"> Mi vehículo es histórico</label>
-      <label><input type="checkbox" id="x-pmr"> Tengo tarjeta de estacionamiento para personas con movilidad reducida</label>
-      <label class="help" for="x-res" style="margin-top:4px">Opcional: ¿en qué municipio paga tu coche el impuesto de circulación? Algunas ciudades dejan entrar a los coches de sus vecinos.</label>
-      <select id="x-res"><option value="">No lo sé o prefiero no decirlo</option></select>
+      <legend class="help" style="margin-bottom:6px" data-t="exc_legend">¿Tienes alguna excepción? (la DGT no la indica en su fichero)</legend>
+      <label><input type="checkbox" id="x-hist"> <span data-t="hist">Mi vehículo es histórico</span></label>
+      <label><input type="checkbox" id="x-pmr"> <span data-t="pmr">Tengo tarjeta de estacionamiento para personas con movilidad reducida</span></label>
+      <label class="help" for="x-res" data-t="res_label" style="margin-top:4px">Opcional: ¿en qué municipio paga tu coche el impuesto de circulación? Algunas ciudades dejan entrar a los coches de sus vecinos.</label>
+      <select id="x-res"><option value="" data-t="res_none">No lo sé o prefiero no decirlo</option></select>
     </fieldset>
     <details>
-      <summary>Prefiero elegir mi etiqueta</summary>
+      <summary data-t="choose_label">Prefiero elegir mi etiqueta</summary>
       <div class="chips" id="chips" style="margin-top:10px"></div>
     </details>
   </section>
@@ -113,42 +116,42 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
     </div>
     <div id="verdicts" style="display:flex;flex-direction:column;gap:12px"></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn ghost" type="button" id="share">Compartir por WhatsApp</button>
+      <button class="btn ghost" type="button" id="share" data-t="share">Compartir por WhatsApp</button>
     </div>
   </section>
 
   <section class="card" aria-labelledby="h-map">
-    <h2 id="h-map">Mapa de las zonas</h2>
-    <label class="help" for="city">Elige una ciudad</label>
+    <h2 id="h-map" data-t="h_map">Mapa de las zonas</h2>
+    <label class="help" for="city" data-t="choose_city">Elige una ciudad</label>
     <select id="city"></select>
     <div id="map" role="region" aria-label="Mapa de la zona de bajas emisiones"></div>
     <div class="mapbar">
-      <span id="where">Pulsa el botón para ver si estás dentro de una zona.</span>
-      <button class="btn ghost" type="button" id="locate">¿Dónde estoy?</button>
+      <span id="where" data-t="where0">Pulsa el botón para ver si estás dentro de una zona.</span>
+      <button class="btn ghost" type="button" id="locate" data-t="locate">¿Dónde estoy?</button>
     </div>
     <div id="cityverdict"></div>
     <dl id="info"></dl>
   </section>
 
   <section class="card" aria-labelledby="h-ruta" id="ruta">
-    <h2 id="h-ruta">Planifica tu viaje</h2>
-    <p class="help">Escribe de dónde sales y a dónde vas. Te decimos qué zonas de bajas emisiones atraviesa la ruta en coche y si puedes entrar con tu etiqueta.</p>
+    <h2 id="h-ruta" data-t="h_route">Planifica tu viaje</h2>
+    <p class="help" data-t="route_help">Escribe de dónde sales y a dónde vas. Te decimos qué zonas de bajas emisiones atraviesa la ruta en coche y si puedes entrar con tu etiqueta.</p>
     <form id="rf" style="display:flex;flex-direction:column;gap:8px">
-      <input class="txt" id="rorig" placeholder="Origen: calle, ciudad o pueblo" aria-label="Origen" required autocomplete="off">
-      <input class="txt" id="rdest" placeholder="Destino: calle, ciudad o pueblo" aria-label="Destino" required autocomplete="off">
-      <button class="btn" type="submit">Ver la ruta</button>
+      <input class="txt" id="rorig" data-tph="orig_ph" placeholder="Origen: calle, ciudad o pueblo" aria-label="Origen" required autocomplete="off">
+      <input class="txt" id="rdest" data-tph="dest_ph" placeholder="Destino: calle, ciudad o pueblo" aria-label="Destino" required autocomplete="off">
+      <button class="btn" type="submit" data-t="route_btn">Ver la ruta</button>
     </form>
     <div id="rres" aria-live="polite" style="display:flex;flex-direction:column;gap:8px"></div>
-    <p class="help">La ruta es orientativa (calculada con OpenStreetMap y OSRM): tu navegador puede llevarte por otro camino. Para buscarla, el origen y el destino se envían a esos servicios.</p>
+    <p class="help" data-t="route_note">La ruta es orientativa (calculada con OpenStreetMap y OSRM): tu navegador puede llevarte por otro camino. Para buscarla, el origen y el destino se envían a esos servicios.</p>
   </section>
 
   <section class="card" aria-labelledby="h-ciu">
-    <h2 id="h-ciu">Zonas de bajas emisiones por ciudad</h2>
+    <h2 id="h-ciu" data-t="h_cities">Zonas de bajas emisiones por ciudad</h2>
     <p class="help"><!--CIUDADES--><!--/CIUDADES--></p>
   </section>
 
   <section class="card" aria-labelledby="h-gui">
-    <h2 id="h-gui">Guías</h2>
+    <h2 id="h-gui" data-t="h_guides">Guías</h2>
     <p class="help guias"><!--GUIAS--><!--/GUIAS--></p>
   </section>
 
@@ -159,6 +162,7 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="i18n.js"></script>
 <script>
 const LABELS={"0":{name:"Cero emisiones",short:"0",color:"var(--l0)"},
   "E":{name:"ECO",short:"ECO",color:"var(--lE)"},
@@ -172,7 +176,7 @@ const cache=new Map();
 function getText(url){if(!cache.has(url))cache.set(url,fetch(url).then(r=>r.ok?r.text():null).catch(()=>null));return cache.get(url)}
 async function getJSON(url){const t=await getText(url);try{return t?JSON.parse(t):null}catch(e){return null}}
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
-function lt(k){return k==="N"?"Sin etiqueta":"Etiqueta "+LABELS[k].name}
+function lt(k){return k==="N"?t("lN"):t("label_x",{x:LABELS[k].name})}
 
 async function lookup(raw){
   const p=raw.toUpperCase().replace(/[^A-Z0-9]/g,"");
@@ -202,7 +206,7 @@ const RANK={no:4,warn:3,exc:2,unk:1,pend:1,ok:0};
 const hasExc=()=>$("x-hist").checked||$("x-pmr").checked;
 const esVecino=z=>!!($("x-res").value&&$("x-res").value===z.ciudad&&z.excepciones&&z.excepciones.residentes);
 function cityVerdict(c,lab){if(c.pend)return "pend";return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
-const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta",pend:"Sin datos aún: consulta al ayuntamiento",exc:"Puede que tengas excepción: compruébalo"};
+const VTXT=new Proxy({},{get:(_,k)=>t("v_"+String(k))});
 function horarioTxt(z){
   if(!z.horario||!z.horario.length)return "Consulta el horario en la web del ayuntamiento";
   return z.horario.map(h=>h.dias+(h.de?" de "+h.de+" a "+(h.a==="23:59"?"24:00":h.a):"")).join(" · ");
@@ -218,8 +222,8 @@ function fiab(z){
 const verificada=c=>!c.pend&&c.zonas.every(z=>fiab(z).ok);
 function cityRow(c,v){
   const b=el("button","row");b.type="button";
-  const s=el("span","st "+(v==="pend"?"unk":v));const n=el("span","nm",c.nombre);const t=el("span","tx",VTXT[v]+(verificada(c)?"":" · dato sin verificar"));
-  b.append(s,n,t);b.addEventListener("click",()=>{selectCity(c.nombre);$("h-map").scrollIntoView({behavior:"smooth"})});
+  const s=el("span","st "+(v==="pend"?"unk":v));const n=el("span","nm",c.nombre);const tx=el("span","tx",VTXT[v]+(verificada(c)?"":t("unverified")));
+  b.append(s,n,tx);b.addEventListener("click",()=>{selectCity(c.nombre);$("h-map").scrollIntoView({behavior:"smooth"})});
   return b;
 }
 
@@ -229,34 +233,46 @@ function showLabel(lab,title,sub){
   if(lab){b.style.background=LABELS[lab].color;b.textContent=LABELS[lab].short}else{b.style.background="var(--lN)";b.textContent="?"}
   $("ltitle").textContent=title;$("lsub").textContent=sub||"";
   const v=$("verdicts");v.textContent="";
+  if(lab&&destino){const dv=cityVerdict(destino,lab);const bx=el("div","verdict "+(dv==="ok"||dv==="no"?dv:"warn"));bx.style.marginBottom="10px";
+    bx.appendChild(el("strong",null,destino.nombre+": "+VTXT[dv]));const a=el("a",null,t("dest_more"));a.href="#h-map";
+    a.addEventListener("click",ev=>{ev.preventDefault();$("h-map").scrollIntoView({behavior:"smooth"})});bx.appendChild(a);v.appendChild(bx)}
   if(lab&&cities.length){
     const res=cities.map(c=>({c,v:cityVerdict(c,lab)}));
     const ok=res.filter(r=>r.v==="ok").length,con=res.filter(r=>r.v!=="pend").length,sin=res.length-con;
-    v.appendChild(el("p","summary","Según los datos publicados, puedes entrar siempre en "+ok+" de "+con+" ciudades con zona de bajas emisiones"));
-    if(sin)v.appendChild(el("p","help","De otros "+sin+" municipios obligados aún no tenemos las normas: están en «Ver todas las ciudades»."));
+    v.appendChild(el("p","summary",t("summary",{ok,n:con})));
+    if(sin)v.appendChild(el("p","help",t("others",{n:sin})));
     if(hasExc())v.appendChild(el("p","help","Muchos ayuntamientos dan excepciones o permisos a los vehículos históricos y a los de personas con movilidad reducida, pero las condiciones cambian mucho de una ciudad a otra (por ejemplo, en Barcelona los históricos solo pueden entrar 24 días al año con permiso) y casi siempre hay que registrar la matrícula antes. Toca una ciudad para ver su norma."));
     else if(lab==="N"||lab==="B")v.appendChild(el("p","help","¿Es un vehículo histórico, tienes tarjeta de movilidad reducida o tu coche paga el impuesto en alguna de estas ciudades? Indícalo arriba: en esos casos suele haber excepciones."));
     const bad=res.filter(r=>r.v!=="ok"&&r.v!=="pend");
-    if(bad.length){v.appendChild(el("p","help","Ojo en estas:"));const ul=el("div","list");bad.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));v.appendChild(ul)}
-    const det=el("details");det.appendChild(el("summary",null,"Ver todas las ciudades"));
+    if(bad.length){v.appendChild(el("p","help",t("watch")));const ul=el("div","list");bad.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));v.appendChild(ul)}
+    const det=el("details");det.appendChild(el("summary",null,t("all")));
     const ul=el("div","list");ul.style.marginTop="10px";res.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));det.appendChild(ul);v.appendChild(det);
-    const aviso=el("p","help","Información orientativa y no oficial. Las normas cambian y cada ayuntamiento tiene la última palabra: antes de entrar, confírmalo en su web. ");
-    const al=el("a",null,"Aviso legal");al.href="aviso-legal/";aviso.appendChild(al);v.appendChild(aviso);
+    const aviso=el("p","help",t("disclaimer"));
+    const al=el("a",null,t("legal"));al.href="aviso-legal/";aviso.appendChild(al);v.appendChild(aviso);
   }
   renderCity();updateWhere();
 }
 
+const norm=s=>(s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+function ciudadDestino(txt){const n=norm(txt);if(!n)return null;
+  return cities.find(c=>norm(c.nombre)===n)||cities.find(c=>norm(c.nombre).startsWith(n))||cities.find(c=>norm(c.nombre).includes(n))||false}
+let destino=null;
 $("f").addEventListener("submit",async e=>{e.preventDefault();
+  const dt=$("dest").value;destino=ciudadDestino(dt);
+  if(destino===false){destino=null;$("result").hidden=false;$("badge").style.background="var(--lN)";$("badge").textContent="?";
+    $("ltitle").textContent=dt;$("lsub").textContent=t("dest_nf");$("verdicts").textContent="";return}
+  if(destino){$("dest").value=destino.nombre;selectCity(destino.nombre)}
+  if(!$("q").value.trim()){if(destino){$("result").hidden=true;$("h-map").scrollIntoView({behavior:"smooth"})}else $("q").focus();return}
   const r=await lookup($("q").value);
-  if(r.bad)return showLabel(null,"Matrícula incompleta","Escríbela entera, por ejemplo 1234BCD o M1234AB.");
+  if(r.bad)return showLabel(null,t("bad_t"),t("bad_s"));
   if(r.missingData)return showLabel(null,"Buscador en preparación","Estamos cargando los datos de la DGT. Mientras, elige tu etiqueta abajo.");
-  if(!r.code)return showLabel(null,"No encontramos "+r.plate,"No aparece en el fichero de la DGT. Revisa que esté bien escrita o consúltala en la sede de la DGT.");
-  showLabel(r.code,lt(r.code),"Matrícula "+r.plate+" según la DGT");
+  if(!r.code)return showLabel(null,t("notfound_t",{p:r.plate}),t("notfound_s"));
+  showLabel(r.code,lt(r.code),t("plate_src",{p:r.plate}));
 });
 Object.entries(LABELS).forEach(([k,l])=>{const b=el("button","chip");b.type="button";
   const d=el("span","dot",l.short);d.style.background=l.color;
-  b.append(d,el("span",null,l.name));
-  b.addEventListener("click",()=>showLabel(k,lt(k),"Elegida por ti"));$("chips").appendChild(b)});
+  b.dataset.k=k;b.append(d,el("span","nm",l.name));
+  b.addEventListener("click",()=>showLabel(k,lt(k),t("chosen")));$("chips").appendChild(b)});
 
 function inside([la,lo],poly){let r=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const[yi,xi]=poly[i],[yj,xj]=poly[j];if(((yi>la)!=(yj>la))&&(lo<(xj-xi)*(la-yi)/(yj-yi)+xi))r=!r}return r}
 const polys=id=>getJSON("data/zonas/"+id+".json");
@@ -341,7 +357,8 @@ async function init(){
   pend.forEach(m=>{if(!by[m.ciudad])by[m.ciudad]={nombre:m.ciudad,zonas:[],pend:m}});
   cities=Object.values(by).sort((a,b)=>a.nombre.localeCompare(b.nombre,"es"));
   cities.forEach(c=>{const o=el("option",null,c.nombre);o.value=c.nombre;$("city").appendChild(o);
-    const r=el("option",null,c.nombre);r.value=c.nombre;$("x-res").appendChild(r)});
+    const r=el("option",null,c.nombre);r.value=c.nombre;$("x-res").appendChild(r);
+    const dl=document.createElement("option");dl.value=c.nombre;$("citylist").appendChild(dl)});
   try{const r=localStorage.getItem("puedo-res");if(r&&cities.some(c=>c.nombre===r))$("x-res").value=r}catch(e){}
   if(window.L&&cities.length){
     map=L.map("map",{scrollWheelZoom:false});
@@ -350,10 +367,19 @@ async function init(){
   const qs=new URLSearchParams(location.search);
   const wanted=qs.get("ciudad");
   if(cities.length)selectCity((cities.find(c=>c.nombre===wanted)||cities.find(c=>c.nombre==="Madrid")||cities[0]).nombre);
+  if(qs.get("destino"))$("dest").value=qs.get("destino");
   if(qs.get("q")){$("q").value=qs.get("q");$("f").requestSubmit()}
   const m=await getJSON("data/meta.json");
   if(m&&m.actualizado)$("meta").textContent="Datos del "+m.actualizado.split("-").reverse().join("/")+".";
 }
+function nombresEtiquetas(){LABELS["0"].name=t("l0");LABELS.E.name=t("lE");LABELS.C.name=t("lC");LABELS.B.name=t("lB");LABELS.N.name=t("lN")}
+Object.entries(IDIOMAS).forEach(([k,n])=>{const o=el("option",null,n);o.value=k;$("lang").appendChild(o)});
+const refrescarChips=()=>document.querySelectorAll("#chips button").forEach(b=>{const n=b.querySelector(".nm");if(n&&b.dataset.k)n.textContent=LABELS[b.dataset.k].name});
+aplicarIdioma(elegirIdioma());$("lang").value=LANG;nombresEtiquetas();refrescarChips();
+$("lang").addEventListener("change",()=>{aplicarIdioma($("lang").value);nombresEtiquetas();
+  const u=new URL(location.href);u.searchParams.set("lang",LANG);history.replaceState(null,"",u);
+  refrescarChips();
+  if(label)showLabel(label,lt(label),$("lsub").textContent);else if(current)renderCity(false)});
 init();
 // Planificador de viaje
 let rutaCapa=null;
