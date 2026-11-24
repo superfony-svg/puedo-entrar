@@ -402,6 +402,37 @@ def pagina_basica(m, todas):
 """)
 
 
+PARKINGS = {}
+
+
+def si_no_puedes(ciudad, exc):
+    """Qué hacer si tu coche no puede entrar: permiso de visitante y aparcamientos fuera de la zona."""
+    partes = []
+    if exc and exc.get("visitantes"):
+        partes.append(f'<h3>Permiso para visitantes</h3><p>{e(exc["visitantes"])}</p>')
+    ps = PARKINGS.get(ciudad) or []
+    if ps:
+        li = []
+        for p in ps:
+            nombre = p["n"] or "Aparcamiento disuasorio"
+            det = [x for x in (("en " + p["tipo"]) if p["tipo"] else "",
+                               f'{p["plazas"]} plazas' if p["plazas"] else "",
+                               "gratis" if p["pago"] == "no" else ("de pago" if p["pago"] == "sí" else "")) if x]
+            url = f'https://www.openstreetmap.org/?mlat={p["lat"]}&mlon={p["lon"]}#map=17/{p["lat"]}/{p["lon"]}'
+            ir = f'https://www.google.com/maps/dir/?api=1&destination={p["lat"]},{p["lon"]}'
+            li.append(f'<li><a href="{url}" target="_blank" rel="noopener">{e(nombre)}</a>'
+                      + (f' <span class="muted">({e(", ".join(det))})</span>' if det else "")
+                      + f' · <a href="{ir}" target="_blank" rel="noopener">Cómo llegar</a></li>')
+        partes.append('<h3>Aparcamientos disuasorios</h3><p class="muted">Aparcamientos para dejar el coche y seguir en transporte público, '
+                      'según OpenStreetMap. Comprueba en el mapa que quedan fuera de la zona y si hay que pagar.</p><ul>' + "".join(li) + "</ul>")
+    else:
+        partes.append('<h3>Aparcamientos</h3><p class="muted">Aún no tenemos aparcamientos disuasorios marcados en esta ciudad. '
+                      'Busca un aparcamiento fuera del límite de la zona (mira el mapa) y sigue en transporte público.</p>')
+    partes.append('<p class="muted">Los aparcamientos públicos dentro de la zona a veces dejan entrar a cualquier coche para aparcar: '
+                  'compruébalo en la ordenanza antes, porque no pasa en todas las ciudades.</p>')
+    return f'<section class="card"><h2>Si tu coche no puede entrar</h2>{"".join(partes)}</section>'
+
+
 def pagina(ciudad, zs, todas):
     s = slug(ciudad)
     exc = next((z["excepciones"] for z in zs if z.get("excepciones")), None)
@@ -453,6 +484,7 @@ def pagina(ciudad, zs, todas):
 <p class="muted">Gratis y sin registro. No guardamos las matrículas.</p></section>
 {zonas}
 {excb}
+{si_no_puedes(ciudad, exc)}
 <section class="card"><h2>Multas</h2><p>Entrar en la zona sin cumplir los requisitos suele costar <strong>200 €</strong> (100 € con pronto pago). La cuantía exacta la fija el ayuntamiento de {e(ciudad)}. <a href="../../guias/recurrir-multa-zbe/">Cómo recurrir una multa</a>.</p></section>
 <section class="card"><h2>Guías</h2><p class="guias">{guias_links("../../")}</p></section>
 <section class="card"><h2>¿Has visto un error?</h2><p class="muted">Las normas cambian. Si algo no cuadra con la ordenanza o las señales, <a href="https://github.com/superfony-svg/puedo-entrar/issues/new?title={urllib.parse.quote("Error en " + ciudad)}" target="_blank" rel="noopener">avísanos</a> y lo corregimos.</p></section>
@@ -466,6 +498,10 @@ def pagina(ciudad, zs, todas):
 def main(web):
     zonas = json.load(open(os.path.join(web, "data", "zonas.json"), encoding="utf-8"))
     aplicar_avisos(web, zonas)
+    try:
+        PARKINGS.update(json.load(open(os.path.join(web, "data", "parkings.json"), encoding="utf-8")))
+    except (OSError, ValueError):
+        pass
     by = {}
     for z in zonas:
         by.setdefault(z["ciudad"], []).append(z)

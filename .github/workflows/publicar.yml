@@ -63,6 +63,7 @@ jobs:
           python scripts/build_zonas.py zbe web/data
           timeout 1500 python scripts/build_osm.py web/data > osm.log 2>&1 || echo "::warning::No se pudieron añadir las zonas de OpenStreetMap"
           cat osm.log
+          timeout 600 python scripts/build_parkings.py web/data || echo "::warning::No se pudieron añadir los aparcamientos"
           python scripts/build_paginas.py web
 
       - name: Comprobar que hay datos

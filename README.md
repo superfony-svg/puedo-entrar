@@ -27,3 +27,7 @@ Web gratuita que, a partir de la matrícula, dice la etiqueta ambiental de la DG
 - Mapa: © OpenStreetMap.
 
 Web no oficial e informativa.
+
+## Aparcamientos disuasorios
+
+`scripts/build_parkings.py` pide a OpenStreetMap los aparcamientos con la etiqueta `park_ride` en unos 6 km alrededor de cada zona y escribe `web/data/parkings.json` (`{"Ciudad": [{"n", "lat", "lon", "pago", "plazas", "tipo"}]}`). Si Overpass no responde usa la copia guardada en `osm_cache/pr_<ciudad>.json`. Cada página de ciudad los muestra en «Si tu coche no puede entrar», junto con el permiso de visitantes de `excepciones.json` (campo `visitantes`).
