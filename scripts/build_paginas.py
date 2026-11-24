@@ -129,7 +129,7 @@ def guias_links(raiz):
 
 
 def menu(raiz):
-    return (f'<nav class="menu" aria-label="Menú"><a href="{raiz}">Inicio</a><a href="{raiz}#h-ciu">Ciudades</a><a href="{raiz}ciudades-abiertas/">Ciudades abiertas</a>'
+    return (f'<nav class="menu" aria-label="Menú"><a href="{raiz}">Inicio</a><a href="{raiz}#h-ciu">Ciudades</a><a href="{raiz}ciudades-abiertas/">Ciudades abiertas</a><a href="{raiz}calendario/">Calendario</a>'
             f'<a href="{raiz}guias/">Guías</a><a href="{raiz}guias/preguntas-frecuentes/">Preguntas</a><a href="{raiz}aviso-legal/">Aviso legal</a></nav>')
 
 
@@ -351,6 +351,56 @@ def aplicar_avisos(web, zonas):
         json.dump(zonas, f, ensure_ascii=False, separators=(",", ":"))
 
 
+def pagina_calendario(by, pend=()):
+    """Calendario: desde cuándo se aplica cada zona, cuáles llegan pronto y cuáles están suspendidas."""
+    hoy = date.today().isoformat()
+    pronto, vigor, sinfecha, avisos, episodios = [], [], [], [], []
+    for c, zs in by.items():
+        enlace = f'<a href="../zbe/{slug(c)}/">{e(c)}</a>'
+        aviso = next((z for z in zs if z.get("aviso")), None)
+        if aviso:
+            avisos.append((c, f'<li>{enlace}: {e(aviso["aviso"])}</li>'))
+            continue
+        if all(z.get("solo_episodios") for z in zs):
+            episodios.append((c, f"<li>{enlace}</li>"))
+            continue
+        fechas = sorted(z["desde"] for z in zs if z.get("desde"))
+        fut = [f for f in fechas if f > hoy]
+        if fut and not [f for f in fechas if f <= hoy]:
+            pronto.append((fut[0], f"<li><strong>{fecha(fut[0])}</strong> · {enlace}</li>"))
+        elif fechas:
+            pas = [f for f in fechas if f <= hoy]
+            vigor.append((pas[-1], f"<li>{fecha(pas[0])} · {enlace}</li>"))
+        else:
+            sinfecha.append((c, f"<li>{enlace}</li>"))
+    bloques = []
+
+    def bloque(tit, expl, filas, rev=False):
+        if filas:
+            li = "".join(x for _, x in sorted(filas, key=lambda r: r[0], reverse=rev))
+            bloques.append(f'<section class="card"><h2>{tit} ({len(filas)})</h2><p class="muted">{expl}</p><ul>{li}</ul></section>')
+    bloque("Próximamente", "Zonas que empiezan a aplicarse en la fecha indicada, según los datos publicados.", pronto)
+    bloque("Suspendidas o con aviso", "Zonas anuladas por un juez, suspendidas o con cambios anunciados. Mira el aviso antes de ir.", sorted(avisos))
+    bloque("En vigor", "Fecha desde la que se aplica cada zona según la DGT o el ayuntamiento. Algunas ciudades empiezan con un periodo de aviso sin multa: lo indicamos en su página cuando lo sabemos.", vigor, rev=True)
+    bloque("En vigor sin fecha publicada", "Zonas activas en los datos oficiales sin fecha de inicio publicada.", sorted(sinfecha))
+    bloque("Solo en episodios de contaminación", "Solo se restringe el paso cuando el ayuntamiento activa un episodio de contaminación.", sorted(episodios))
+    for k, tit in (("vigor", "En vigor según la prensa, sin normas detalladas aún"), ("tramite", "En trámite"), ("pendiente", "Sin empezar los trámites"), ("", "Obligadas, sin información")):
+        ms = sorted((m for m in pend if m.get("estado_prensa", "") == k), key=lambda m: slug(m["ciudad"]))
+        if ms:
+            bloques.append(f'<section class="card"><h2>{tit} ({len(ms)})</h2><p class="muted">Según la prensa (Motor16, 31 de marzo de 2026). Sin verificar con la ordenanza.</p><p class="guias">'
+                           + "".join(f'<a href="../zbe/{slug(m["ciudad"])}/">{e(m["ciudad"])}</a>' for m in ms) + "</p></section>")
+    titulo = "Calendario de las zonas de bajas emisiones: desde cuándo multa cada ciudad"
+    desc = "Fechas de inicio de las zonas de bajas emisiones de España, las que llegan pronto, las suspendidas y las que siguen en trámite. Actualizado cada día."
+    return (cabecera(titulo, desc, f"{BASE}calendario/", faq_ld([]))
+            + f"""<p class="muted"><a href="../">¿Puedo entrar?</a> › Calendario</p>
+<h1>Calendario de las zonas de bajas emisiones</h1>
+<p>Desde cuándo se aplica cada zona, cuáles llegan pronto y cuáles están suspendidas. Hecho con los datos de la DGT, los ayuntamientos y la prensa, y actualizado cada día.</p>
+{"".join(bloques)}
+{FOOTER.format(raiz='../')}
+</div></body></html>
+""")
+
+
 ESTADO_PRENSA = {
     "vigor": "Según la prensa (Motor16, 31 de marzo de 2026), {c} ya tiene la zona de bajas emisiones en vigor. Aún no tenemos sus normas detalladas (etiquetas, horario y mapa).",
     "tramite": "Según la prensa (Motor16, 31 de marzo de 2026), la zona de bajas emisiones de {c} estaba en trámite: aprobada o en preparación, pero no del todo en marcha.",
@@ -530,6 +580,10 @@ def main(web):
     with open(os.path.join(web, "ciudades-abiertas", "index.html"), "w", encoding="utf-8") as f:
         f.write(pagina_ranking(by, pend))
     urls.append(f"{BASE}ciudades-abiertas/")
+    os.makedirs(os.path.join(web, "calendario"), exist_ok=True)
+    with open(os.path.join(web, "calendario", "index.html"), "w", encoding="utf-8") as f:
+        f.write(pagina_calendario(by, pend))
+    urls.append(f"{BASE}calendario/")
     os.makedirs(os.path.join(web, "guias"), exist_ok=True)
     with open(os.path.join(web, "guias", "index.html"), "w", encoding="utf-8") as f:
         f.write(indice_guias())

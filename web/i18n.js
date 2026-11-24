@@ -4,7 +4,7 @@ const IDIOMAS = {
   de: "Deutsch", pl: "Polski", pt: "Português", it: "Italiano", ro: "Română", ar: "العربية"
 };
 const TXT = {
-es: {nav_home:"Inicio",nav_cities:"Ciudades",nav_open:"Ciudades abiertas",nav_guides:"Guías",nav_faq:"Preguntas",nav_legal:"Aviso legal",
+es: {nav_home:"Inicio",nav_cal:"Calendario",nav_cities:"Ciudades",nav_open:"Ciudades abiertas",nav_guides:"Guías",nav_faq:"Preguntas",nav_legal:"Aviso legal",
 h1:"¿Puedo entrar con mi coche?",sub:"Escribe tu matrícula y te decimos tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar.",install:"Instalar como app en el móvil",
 h_plate:"Tu matrícula",check:"Comprobar",nostore:"No guardamos las matrículas que escribes.",exc_legend:"¿Tienes alguna excepción? (la DGT no la indica en su fichero)",hist:"Mi vehículo es histórico",pmr:"Tengo tarjeta de estacionamiento para personas con movilidad reducida",
 res_label:"Opcional: ¿en qué municipio paga tu coche el impuesto de circulación? Algunas ciudades dejan entrar a los coches de sus vecinos.",res_none:"No lo sé o prefiero no decirlo",choose_label:"Prefiero elegir mi etiqueta",share:"Compartir por WhatsApp",
@@ -17,7 +17,7 @@ summary:"Según los datos publicados, puedes entrar siempre en {ok} de {n} ciuda
 bad_t:"Matrícula incompleta",bad_s:"Escríbela entera, por ejemplo 1234BCD o M1234AB.",notfound_t:"No encontramos {p}",notfound_s:"No aparece en el fichero de la DGT. Revisa que esté bien escrita o consúltala en la sede de la DGT.",
 dest_city:"¿A dónde vas? (opcional) Ej.: Granada",dest_nf:"No tenemos esa ciudad. Elige una de la lista o mira «Ver todas las ciudades».",dest_more:"Ver normas y mapa",others:"De otros {n} municipios obligados aún no tenemos las normas: están en «Ver todas las ciudades»."},
 
-ca: {nav_home:"Inici",nav_cities:"Ciutats",nav_open:"Ciutats obertes",nav_guides:"Guies",nav_faq:"Preguntes",nav_legal:"Avís legal",
+ca: {nav_home:"Inici",nav_cal:"Calendari",nav_cities:"Ciutats",nav_open:"Ciutats obertes",nav_guides:"Guies",nav_faq:"Preguntes",nav_legal:"Avís legal",
 h1:"Puc entrar amb el meu cotxe?",sub:"Escriu la matrícula i et diem l'etiqueta de la DGT i en quines zones de baixes emissions d'Espanya pots entrar.",install:"Instal·lar com a app al mòbil",
 h_plate:"La teua matrícula",check:"Comprovar",nostore:"No guardem les matrícules que escrius.",exc_legend:"Tens alguna excepció? (la DGT no ho indica al seu fitxer)",hist:"El meu vehicle és històric",pmr:"Tinc targeta d'aparcament per a persones amb mobilitat reduïda",
 res_label:"Opcional: en quin municipi paga el teu cotxe l'impost de circulació? Algunes ciutats deixen entrar els cotxes dels seus veïns.",res_none:"No ho sé o prefereixo no dir-ho",choose_label:"Prefereixo triar la meua etiqueta",share:"Compartir per WhatsApp",
@@ -30,7 +30,7 @@ summary:"Segons les dades publicades, pots entrar sempre en {ok} de {n} ciutats 
 bad_t:"Matrícula incompleta",bad_s:"Escriu-la sencera, per exemple 1234BCD o M1234AB.",notfound_t:"No trobem {p}",notfound_s:"No apareix al fitxer de la DGT. Revisa que estiga ben escrita o consulta-la a la seu de la DGT.",
 dest_city:"On vas? (opcional) Ex.: Granada",dest_nf:"No tenim aquesta ciutat. Tria'n una de la llista o mira «Veure totes les ciutats».",dest_more:"Veure normes i mapa",others:"D'altres {n} municipis obligats encara no tenim les normes: són a «Veure totes les ciutats»."},
 
-eu: {nav_home:"Hasiera",nav_cities:"Hiriak",nav_open:"Hiri irekiak",nav_guides:"Gidak",nav_faq:"Galderak",nav_legal:"Lege-oharra",
+eu: {nav_home:"Hasiera",nav_cal:"Egutegia",nav_cities:"Hiriak",nav_open:"Hiri irekiak",nav_guides:"Gidak",nav_faq:"Galderak",nav_legal:"Lege-oharra",
 h1:"Sar naiteke nire autoarekin?",sub:"Idatzi zure matrikula eta DGTren etiketa eta Espainiako zein emisio gutxiko gunetan sar zaitezkeen esango dizugu.",install:"Instalatu aplikazio gisa mugikorrean",
 h_plate:"Zure matrikula",check:"Egiaztatu",nostore:"Ez ditugu idazten dituzun matrikulak gordetzen.",exc_legend:"Salbuespenik baduzu? (DGTk ez du bere fitxategian adierazten)",hist:"Nire ibilgailua historikoa da",pmr:"Mugikortasun murriztuko pertsonentzako aparkatzeko txartela daukat",
 res_label:"Aukerakoa: zein udalerritan ordaintzen du zure autoak zirkulazio-zerga? Hiri batzuek beren bizilagunen autoei sartzen uzten diete.",res_none:"Ez dakit edo nahiago dut ez esan",choose_label:"Nahiago dut nire etiketa aukeratu",share:"Partekatu WhatsApp bidez",
@@ -43,7 +43,7 @@ summary:"Argitaratutako datuen arabera, emisio gutxiko gunea duten {n} hirietati
 bad_t:"Matrikula osatu gabe",bad_s:"Idatzi osorik, adibidez 1234BCD edo M1234AB.",notfound_t:"Ez dugu {p} aurkitu",notfound_s:"Ez da DGTren fitxategian agertzen. Egiaztatu ondo idatzita dagoela edo kontsultatu DGTren egoitzan.",
 dest_city:"Nora zoaz? (aukerakoa) Adib.: Granada",dest_nf:"Ez dugu hiri hori. Aukeratu zerrendako bat edo begiratu «Ikusi hiri guztiak».",dest_more:"Arauak eta mapa ikusi",others:"Behartutako beste {n} udalerriren arauak ez ditugu oraindik: «Ikusi hiri guztiak» atalean daude."},
 
-gl: {nav_home:"Inicio",nav_cities:"Cidades",nav_open:"Cidades abertas",nav_guides:"Guías",nav_faq:"Preguntas",nav_legal:"Aviso legal",
+gl: {nav_home:"Inicio",nav_cal:"Calendario",nav_cities:"Cidades",nav_open:"Cidades abertas",nav_guides:"Guías",nav_faq:"Preguntas",nav_legal:"Aviso legal",
 h1:"Podo entrar co meu coche?",sub:"Escribe a túa matrícula e dicímosche a túa etiqueta da DGT e en que zonas de baixas emisións de España podes entrar.",install:"Instalar como app no móbil",
 h_plate:"A túa matrícula",check:"Comprobar",nostore:"Non gardamos as matrículas que escribes.",exc_legend:"Tes algunha excepción? (a DGT non o indica no seu ficheiro)",hist:"O meu vehículo é histórico",pmr:"Teño tarxeta de estacionamento para persoas con mobilidade reducida",
 res_label:"Opcional: en que concello paga o teu coche o imposto de circulación? Algunhas cidades deixan entrar os coches da súa veciñanza.",res_none:"Non o sei ou prefiro non dicilo",choose_label:"Prefiro escoller a miña etiqueta",share:"Compartir por WhatsApp",
@@ -56,7 +56,7 @@ summary:"Segundo os datos publicados, podes entrar sempre en {ok} de {n} cidades
 bad_t:"Matrícula incompleta",bad_s:"Escríbea enteira, por exemplo 1234BCD ou M1234AB.",notfound_t:"Non atopamos {p}",notfound_s:"Non aparece no ficheiro da DGT. Revisa que estea ben escrita ou consúltaa na sede da DGT.",
 dest_city:"A onde vas? (opcional) Ex.: Granada",dest_nf:"Non temos esa cidade. Escolle unha da lista ou mira «Ver todas as cidades».",dest_more:"Ver normas e mapa",others:"Doutros {n} concellos obrigados aínda non temos as normas: están en «Ver todas as cidades»."},
 
-oc: {nav_home:"Inici",nav_cities:"Ciutats",nav_open:"Ciutats dubèrtes",nav_guides:"Guides",nav_faq:"Questions",nav_legal:"Avís legau",
+oc: {nav_home:"Inici",nav_cal:"Calendari",nav_cities:"Ciutats",nav_open:"Ciutats dubèrtes",nav_guides:"Guides",nav_faq:"Questions",nav_legal:"Avís legau",
 h1:"Pòdi entrar damb eth mèn còche?",sub:"Escriu era tua matricula e te dideram era tua etiqueta dera DGT e en quines zònes de baishes emissions d'Espanha pòts entrar.",install:"Installar coma app en mobil",
 h_plate:"Era tua matricula",check:"Verificar",nostore:"Non guardam es matricules que escrius.",exc_legend:"As quauque excepcion? (era DGT non l'indica en sòn fichèr)",hist:"Eth mèn veïcul ei istoric",pmr:"È carta d'estacionament entà persones damb mobilitat redusida",
 res_label:"Opcionau: en quin municipi pague eth tòn còche er impòst de circulacion? Quauques ciutats dèishen entrar es còches des sòns vesins.",res_none:"Non ac sai o prefereishi non díder-ac",choose_label:"Prefereishi triar era mia etiqueta",share:"Partejar per WhatsApp",
@@ -69,7 +69,7 @@ summary:"Segontes es donades publicades, pòts entrar tostemp en {ok} de {n} ciu
 bad_t:"Matricula incompleta",bad_s:"Escriu-la sancera, per exemple 1234BCD o M1234AB.",notfound_t:"Non trobam {p}",notfound_s:"Non apareish en fichèr dera DGT. Revisa qu'estigue ben escrita o consulta-la ena sedença dera DGT.",
 dest_city:"A on vas? (opcionau) Ex.: Granada",dest_nf:"Non auem aguesta ciutat. Tria-ne ua dera lista o guarda «Veir totes es ciutats».",dest_more:"Veir normes e mapa",others:"D'auti {n} municipis obligats encara non auem es normes: son en «Veir totes es ciutats»."},
 
-en: {nav_home:"Home",nav_cities:"Cities",nav_open:"Most open cities",nav_guides:"Guides",nav_faq:"FAQ",nav_legal:"Legal notice",
+en: {nav_home:"Home",nav_cal:"Calendar",nav_cities:"Cities",nav_open:"Most open cities",nav_guides:"Guides",nav_faq:"FAQ",nav_legal:"Legal notice",
 h1:"Can my car enter?",sub:"Type your Spanish number plate and we'll tell you its DGT environmental label and which low emission zones in Spain you can enter.",install:"Install as an app on your phone",
 h_plate:"Your number plate",check:"Check",nostore:"We don't store the plates you type.",exc_legend:"Do you have an exemption? (the DGT file doesn't show it)",hist:"My vehicle is a historic vehicle",pmr:"I have a disabled parking card",
 res_label:"Optional: in which Spanish town does your car pay road tax? Some cities let local residents' cars in.",res_none:"I don't know / prefer not to say",choose_label:"I'd rather choose my label",share:"Share on WhatsApp",
@@ -82,7 +82,7 @@ summary:"According to published data, you can always enter {ok} of {n} cities wi
 bad_t:"Incomplete plate",bad_s:"Type the whole plate, e.g. 1234BCD or M1234AB.",notfound_t:"We couldn't find {p}",notfound_s:"It isn't in the DGT file. Check it's typed correctly.",
 dest_city:"Where are you going? (optional) e.g. Granada",dest_nf:"We don't have that city. Pick one from the list or see «See all cities».",dest_more:"See rules and map",others:"For {n} other municipalities that must have a zone we don't have the rules yet: see «See all cities»."},
 
-fr: {nav_home:"Accueil",nav_cities:"Villes",nav_open:"Villes les plus ouvertes",nav_guides:"Guides",nav_faq:"Questions",nav_legal:"Mentions légales",
+fr: {nav_home:"Accueil",nav_cal:"Calendrier",nav_cities:"Villes",nav_open:"Villes les plus ouvertes",nav_guides:"Guides",nav_faq:"Questions",nav_legal:"Mentions légales",
 h1:"Puis-je entrer avec ma voiture ?",sub:"Saisissez votre plaque espagnole : nous vous indiquons votre vignette environnementale de la DGT et dans quelles zones à faibles émissions d'Espagne vous pouvez entrer.",install:"Installer comme appli sur le téléphone",
 h_plate:"Votre plaque",check:"Vérifier",nostore:"Nous ne conservons pas les plaques saisies.",exc_legend:"Avez-vous une dérogation ? (le fichier de la DGT ne l'indique pas)",hist:"Mon véhicule est un véhicule historique",pmr:"J'ai une carte de stationnement pour personnes handicapées",
 res_label:"Facultatif : dans quelle commune espagnole votre voiture paie-t-elle la taxe de circulation ? Certaines villes laissent entrer les voitures de leurs habitants.",res_none:"Je ne sais pas / je préfère ne pas le dire",choose_label:"Je préfère choisir ma vignette",share:"Partager sur WhatsApp",
@@ -95,7 +95,7 @@ summary:"D'après les données publiées, vous pouvez toujours entrer dans {ok} 
 bad_t:"Plaque incomplète",bad_s:"Saisissez la plaque entière, par ex. 1234BCD ou M1234AB.",notfound_t:"Nous ne trouvons pas {p}",notfound_s:"Elle ne figure pas dans le fichier de la DGT. Vérifiez la saisie.",
 dest_city:"Où allez-vous ? (facultatif) Ex. : Grenade",dest_nf:"Nous n'avons pas cette ville. Choisissez-en une dans la liste ou voyez «Voir toutes les villes».",dest_more:"Voir règles et carte",others:"Pour {n} autres communes concernées, nous n'avons pas encore les règles : voir «Voir toutes les villes»."},
 
-de: {nav_home:"Start",nav_cities:"Städte",nav_open:"Offenste Städte",nav_guides:"Ratgeber",nav_faq:"Fragen",nav_legal:"Impressum",
+de: {nav_home:"Start",nav_cal:"Kalender",nav_cities:"Städte",nav_open:"Offenste Städte",nav_guides:"Ratgeber",nav_faq:"Fragen",nav_legal:"Impressum",
 h1:"Darf ich mit meinem Fahrzeug hinein?",sub:"Geben Sie Ihr spanisches Kennzeichen ein: Wir zeigen Ihre Umweltplakette der DGT und in welche Umweltzonen in Spanien Sie fahren dürfen.",install:"Als App auf dem Handy installieren",
 h_plate:"Ihr Kennzeichen",check:"Prüfen",nostore:"Wir speichern die eingegebenen Kennzeichen nicht.",exc_legend:"Haben Sie eine Ausnahme? (steht nicht in der DGT-Datei)",hist:"Mein Fahrzeug ist ein Oldtimer (historisch)",pmr:"Ich habe einen Parkausweis für Menschen mit Behinderung",
 res_label:"Optional: In welcher spanischen Gemeinde zahlt Ihr Fahrzeug die Kfz-Steuer? Manche Städte lassen Fahrzeuge ihrer Einwohner hinein.",res_none:"Weiß ich nicht / möchte ich nicht sagen",choose_label:"Ich wähle meine Plakette lieber selbst",share:"Über WhatsApp teilen",
@@ -108,7 +108,7 @@ summary:"Laut veröffentlichten Daten dürfen Sie immer in {ok} von {n} Städten
 bad_t:"Kennzeichen unvollständig",bad_s:"Bitte vollständig eingeben, z. B. 1234BCD oder M1234AB.",notfound_t:"{p} nicht gefunden",notfound_s:"Nicht in der DGT-Datei. Bitte Schreibweise prüfen.",
 dest_city:"Wohin fahren Sie? (optional) z. B. Granada",dest_nf:"Diese Stadt haben wir nicht. Wählen Sie eine aus der Liste oder sehen Sie «Alle Städte anzeigen».",dest_more:"Regeln und Karte ansehen",others:"Für {n} weitere verpflichtete Gemeinden haben wir die Regeln noch nicht: siehe «Alle Städte anzeigen»."},
 
-pl: {nav_home:"Start",nav_cities:"Miasta",nav_open:"Najbardziej otwarte miasta",nav_guides:"Poradniki",nav_faq:"Pytania",nav_legal:"Nota prawna",
+pl: {nav_home:"Start",nav_cal:"Kalendarz",nav_cities:"Miasta",nav_open:"Najbardziej otwarte miasta",nav_guides:"Poradniki",nav_faq:"Pytania",nav_legal:"Nota prawna",
 h1:"Czy mogę wjechać swoim pojazdem?",sub:"Wpisz hiszpański numer rejestracyjny, a pokażemy naklejkę ekologiczną DGT i do których stref niskiej emisji w Hiszpanii możesz wjechać.",install:"Zainstaluj jako aplikację w telefonie",
 h_plate:"Twój numer rejestracyjny",check:"Sprawdź",nostore:"Nie zapisujemy wpisanych numerów.",exc_legend:"Masz wyjątek? (plik DGT tego nie podaje)",hist:"Mój pojazd jest zabytkowy",pmr:"Mam kartę parkingową dla osób z niepełnosprawnością",
 res_label:"Opcjonalnie: w której hiszpańskiej gminie twój pojazd płaci podatek drogowy? Niektóre miasta wpuszczają pojazdy swoich mieszkańców.",res_none:"Nie wiem / wolę nie mówić",choose_label:"Wolę sam wybrać naklejkę",share:"Udostępnij przez WhatsApp",
@@ -121,7 +121,7 @@ summary:"Według opublikowanych danych zawsze możesz wjechać do {ok} z {n} mia
 bad_t:"Niepełny numer",bad_s:"Wpisz cały numer, np. 1234BCD lub M1234AB.",notfound_t:"Nie znaleziono {p}",notfound_s:"Nie ma go w pliku DGT. Sprawdź pisownię.",
 dest_city:"Dokąd jedziesz? (opcjonalnie) np. Granada",dest_nf:"Nie mamy tego miasta. Wybierz z listy albo zobacz «Zobacz wszystkie miasta».",dest_more:"Zobacz zasady i mapę",others:"Dla {n} innych zobowiązanych gmin nie mamy jeszcze zasad: zobacz «Zobacz wszystkie miasta»."},
 
-pt: {nav_home:"Início",nav_cities:"Cidades",nav_open:"Cidades mais abertas",nav_guides:"Guias",nav_faq:"Perguntas",nav_legal:"Aviso legal",
+pt: {nav_home:"Início",nav_cal:"Calendário",nav_cities:"Cidades",nav_open:"Cidades mais abertas",nav_guides:"Guias",nav_faq:"Perguntas",nav_legal:"Aviso legal",
 h1:"Posso entrar com o meu carro?",sub:"Escreva a matrícula espanhola e dizemos-lhe o dístico ambiental da DGT e em que zonas de baixas emissões de Espanha pode entrar.",install:"Instalar como app no telemóvel",
 h_plate:"A sua matrícula",check:"Verificar",nostore:"Não guardamos as matrículas escritas.",exc_legend:"Tem alguma exceção? (o ficheiro da DGT não a indica)",hist:"O meu veículo é histórico",pmr:"Tenho cartão de estacionamento para pessoas com mobilidade reduzida",
 res_label:"Opcional: em que município espanhol paga o seu carro o imposto de circulação? Algumas cidades deixam entrar os carros dos seus moradores.",res_none:"Não sei / prefiro não dizer",choose_label:"Prefiro escolher o meu dístico",share:"Partilhar no WhatsApp",
@@ -134,7 +134,7 @@ summary:"Segundo os dados publicados, pode entrar sempre em {ok} de {n} cidades 
 bad_t:"Matrícula incompleta",bad_s:"Escreva-a completa, por exemplo 1234BCD ou M1234AB.",notfound_t:"Não encontrámos {p}",notfound_s:"Não aparece no ficheiro da DGT. Verifique se está bem escrita.",
 dest_city:"Para onde vai? (opcional) Ex.: Granada",dest_nf:"Não temos essa cidade. Escolha uma da lista ou veja «Ver todas as cidades».",dest_more:"Ver regras e mapa",others:"De outros {n} municípios obrigados ainda não temos as regras: estão em «Ver todas as cidades»."},
 
-it: {nav_home:"Inizio",nav_cities:"Città",nav_open:"Città più aperte",nav_guides:"Guide",nav_faq:"Domande",nav_legal:"Note legali",
+it: {nav_home:"Inizio",nav_cal:"Calendario",nav_cities:"Città",nav_open:"Città più aperte",nav_guides:"Guide",nav_faq:"Domande",nav_legal:"Note legali",
 h1:"Posso entrare con la mia auto?",sub:"Scrivi la targa spagnola e ti diciamo il bollino ambientale della DGT e in quali zone a basse emissioni della Spagna puoi entrare.",install:"Installa come app sul telefono",
 h_plate:"La tua targa",check:"Verifica",nostore:"Non salviamo le targhe inserite.",exc_legend:"Hai un'esenzione? (il file della DGT non la indica)",hist:"Il mio veicolo è storico",pmr:"Ho il contrassegno per persone con disabilità",
 res_label:"Facoltativo: in quale comune spagnolo la tua auto paga il bollo? Alcune città fanno entrare le auto dei residenti.",res_none:"Non lo so / preferisco non dirlo",choose_label:"Preferisco scegliere il mio bollino",share:"Condividi su WhatsApp",
@@ -147,7 +147,7 @@ summary:"Secondo i dati pubblicati, puoi entrare sempre in {ok} delle {n} città
 bad_t:"Targa incompleta",bad_s:"Scrivila intera, ad es. 1234BCD o M1234AB.",notfound_t:"Non troviamo {p}",notfound_s:"Non compare nel file della DGT. Controlla di averla scritta bene.",
 dest_city:"Dove vai? (facoltativo) Es.: Granada",dest_nf:"Non abbiamo questa città. Scegline una dall'elenco o vedi «Vedi tutte le città».",dest_more:"Vedi regole e mappa",others:"Per altri {n} comuni obbligati non abbiamo ancora le regole: sono in «Vedi tutte le città»."},
 
-ro: {nav_home:"Acasă",nav_cities:"Orașe",nav_open:"Orașe cele mai deschise",nav_guides:"Ghiduri",nav_faq:"Întrebări",nav_legal:"Informații legale",
+ro: {nav_home:"Acasă",nav_cal:"Calendar",nav_cities:"Orașe",nav_open:"Orașe cele mai deschise",nav_guides:"Ghiduri",nav_faq:"Întrebări",nav_legal:"Informații legale",
 h1:"Pot intra cu mașina mea?",sub:"Scrie numărul de înmatriculare spaniol și îți spunem eticheta ecologică DGT și în ce zone cu emisii scăzute din Spania poți intra.",install:"Instalează ca aplicație pe telefon",
 h_plate:"Numărul tău",check:"Verifică",nostore:"Nu păstrăm numerele introduse.",exc_legend:"Ai o excepție? (fișierul DGT nu o arată)",hist:"Vehiculul meu este istoric",pmr:"Am card de parcare pentru persoane cu mobilitate redusă",
 res_label:"Opțional: în ce localitate din Spania plătește mașina ta impozitul auto? Unele orașe lasă să intre mașinile localnicilor.",res_none:"Nu știu / prefer să nu spun",choose_label:"Prefer să-mi aleg eticheta",share:"Trimite pe WhatsApp",
@@ -160,7 +160,7 @@ summary:"Conform datelor publicate, poți intra mereu în {ok} din {n} orașe cu
 bad_t:"Număr incomplet",bad_s:"Scrie-l complet, de ex. 1234BCD sau M1234AB.",notfound_t:"Nu găsim {p}",notfound_s:"Nu apare în fișierul DGT. Verifică dacă e scris corect.",
 dest_city:"Unde mergi? (opțional) Ex.: Granada",dest_nf:"Nu avem acest oraș. Alege unul din listă sau vezi «Vezi toate orașele».",dest_more:"Vezi regulile și harta",others:"Pentru alte {n} localități obligate nu avem încă regulile: sunt la «Vezi toate orașele»."},
 
-ar: {nav_home:"الرئيسية",nav_cities:"المدن",nav_open:"المدن الأكثر انفتاحًا",nav_guides:"أدلة",nav_faq:"أسئلة",nav_legal:"إشعار قانوني",
+ar: {nav_home:"الرئيسية",nav_cal:"التقويم",nav_cities:"المدن",nav_open:"المدن الأكثر انفتاحًا",nav_guides:"أدلة",nav_faq:"أسئلة",nav_legal:"إشعار قانوني",
 h1:"هل يمكنني الدخول بسيارتي؟",sub:"اكتب رقم لوحة سيارتك الإسبانية وسنخبرك بالملصق البيئي الخاص بها من مديرية المرور (DGT) وبالمناطق منخفضة الانبعاثات في إسبانيا التي يمكنك دخولها.",install:"ثبّت الموقع كتطبيق على هاتفك",
 h_plate:"رقم لوحتك",check:"تحقّق",nostore:"لا نحتفظ بأرقام اللوحات التي تكتبها.",exc_legend:"هل لديك استثناء؟ (ملف DGT لا يذكره)",hist:"مركبتي تاريخية",pmr:"لدي بطاقة وقوف لذوي الإعاقة",
 res_label:"اختياري: في أي بلدية إسبانية تدفع سيارتك ضريبة السير؟ بعض المدن تسمح بدخول سيارات سكانها.",res_none:"لا أعرف / أفضّل عدم القول",choose_label:"أفضّل اختيار ملصقي بنفسي",share:"شارك عبر واتساب",
