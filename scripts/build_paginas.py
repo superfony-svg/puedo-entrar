@@ -77,6 +77,8 @@ def zona_html(z, ciudad):
         rows.append(("Estado", "Aún no está activa"))
     elif z.get("desde") and z["desde"] > date.today().isoformat():
         rows.append(("Estado", f"Se aplicará desde el {fecha(z['desde'])}"))
+    if z.get("sin_mapa"):
+        rows.append(("Mapa", "Aún no tenemos el contorno exacto de la zona: guíate por las señales de entrada."))
     if z.get("permitidas"):
         chips = "".join(
             f'<span class="chip {"ok" if k in z["permitidas"] else "no"}">{"✓" if k in z["permitidas"] else "✗"} {NOMBRES[k]}</span>'
@@ -239,11 +241,32 @@ def pagina_ranking(by):
 """)
 
 
-def aplicar_avisos(web, zonas):
-    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "avisos.json")
+def añadir_manuales(zonas):
+    here = os.path.dirname(os.path.abspath(__file__))
+    path = os.path.join(here, "manuales.json")
     if not os.path.exists(path):
         return
-    avisos = json.load(open(path, encoding="utf-8"))
+    man = json.load(open(path, encoding="utf-8"))
+    exc = json.load(open(os.path.join(here, "excepciones.json"), encoding="utf-8"))
+    ya = {z["ciudad"] for z in zonas}
+    for ciudad, m in man.items():
+        if ciudad.startswith("_") or ciudad in ya:
+            continue
+        z = {"id": slug(ciudad + "-" + m.get("zona", "") + "-manual")[:80], "ciudad": ciudad, "zona": m.get("zona", ""),
+             "estado": "active", "permitidas": m.get("permitidas"), "dato_dudoso": not m.get("permitidas"),
+             "solo_episodios": m.get("solo_episodios", False), "descripcion": m.get("descripcion", ""),
+             "horario": m.get("horario", []), "desde": m.get("desde", ""), "info_url": m.get("info_url", ""),
+             "version": m.get("revisado", ""), "bbox": m["bbox"], "fuente": "manual", "sin_mapa": True}
+        if ciudad in exc:
+            z["excepciones"] = exc[ciudad]
+        zonas.append(z)
+    zonas.sort(key=lambda z: (slug(z["ciudad"]), z["zona"]))
+
+
+def aplicar_avisos(web, zonas):
+    añadir_manuales(zonas)
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "avisos.json")
+    avisos = json.load(open(path, encoding="utf-8")) if os.path.exists(path) else {}
     for z in zonas:
         a = avisos.get(z["ciudad"])
         if isinstance(a, dict):

@@ -11,5 +11,11 @@
     "pmr": "Exentos los vehículos que transportan a personas con movilidad reducida, si están inscritos en el Registro metropolitano (AMB).",
     "fuente": "https://bcnroc.ajuntament.barcelona.cat/jspui/bitstream/11703/129220/2/GM_ordenan%c3%a7a-ZBE_2023.pdf",
     "revisado": "2026-11-24"
+  },
+  "Almería": {
+    "historicos": "Pueden entrar según la ordenanza (resumen del RACE). Confirma en el Ayuntamiento si hay que pedir autorización antes.",
+    "pmr": "Pueden entrar los vehículos de personas con movilidad reducida.",
+    "fuente": "https://almeriaciudad.es/empleo-publico/wp-content/archivos/sites/22/2023/10/texto-de-la-ordenanza.pdf",
+    "revisado": "2026-11-24"
   }
 }

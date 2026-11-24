@@ -1,0 +1,14 @@
+{
+  "_nota": "Zonas añadidas a mano para ciudades que no están ni en la DGT ni en OpenStreetMap. Clave: ciudad. Si más adelante la DGT u OSM la publican, gana ese dato. 'bbox' es aproximado (sur, oeste, norte, este) y solo sirve para centrar el mapa.",
+  "Almería": {
+    "zona": "Casco Histórico y Pescadería",
+    "permitidas": ["0", "E", "C", "B"],
+    "horario": [{"dias": "Lunes a viernes", "de": "08:00", "a": "20:00"}],
+    "desde": "2024-01-01",
+    "descripcion": "Los coches sin etiqueta solo pueden entrar si están dados de alta en Almería (periodo transitorio), y también los históricos, los de movilidad reducida, los que tienen garaje privado acreditado y los servicios autorizados. Control con cámaras. Según el resumen del RACE; confirma en el Ayuntamiento si ya multa.",
+    "info_url": "https://almeriaciudad.es/empleo-publico/wp-content/archivos/sites/22/2023/10/texto-de-la-ordenanza.pdf",
+    "bbox": [36.835, -2.478, 36.846, -2.458],
+    "fuente_datos": "https://www.race.es/zonas-de-bajas-emisiones/mapa-zbe-almeria",
+    "revisado": "2026-11-24"
+  }
+}

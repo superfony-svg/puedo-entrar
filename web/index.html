@@ -243,6 +243,7 @@ async function renderCity(fit){
     if(z.aviso&&z.aviso_fuente&&/^https?:\/\//.test(z.aviso_fuente))add("Fuente del aviso","Leer la noticia",z.aviso_fuente);
     if(z.desde&&z.desde>new Date().toISOString().slice(0,10))add("Estado","Aún no se aplica");
     if(z.solo_episodios)add("Cuándo se aplica","Solo durante episodios de contaminación");
+    if(z.sin_mapa)add("Mapa","Aún no tenemos el contorno exacto de la zona: guíate por las señales de entrada.");
     add("Horario",horarioTxt(z));
     if(z.desde)add("En vigor desde",z.desde.split("-").reverse().join("/"));
     if(z.descripcion&&z.descripcion.length>25)add("Detalles",z.descripcion);
@@ -256,6 +257,7 @@ async function renderCity(fit){
   for(const z of current.zonas){const ps=await polys(z.id);if(!ps)continue;
     const v=zoneVerdict(z,label);const col=label?colorOf(v):colorOf("ok");
     ps.forEach(p=>{const pl=L.polygon(p,{color:col,weight:3,fillOpacity:.15}).addTo(map).bindTooltip("ZBE "+current.nombre+(z.zona?" · "+z.zona:""));layers.push(pl);bounds.push(pl.getBounds())})}
+  if(fit&&!bounds.length){const bb=current.zonas[0].bbox;if(bb)map.fitBounds([[bb[0],bb[1]],[bb[2],bb[3]]])}
   if(fit&&bounds.length){let b=bounds[0];bounds.slice(1).forEach(x=>b.extend(x));map.fitBounds(b,{padding:[20,20]})}
 }
 
@@ -264,7 +266,8 @@ async function updateWhere(){
   const cand=zones.filter(z=>pos[0]>=z.bbox[0]&&pos[0]<=z.bbox[2]&&pos[1]>=z.bbox[1]&&pos[1]<=z.bbox[3]);
   let hit=null;
   for(const z of cand){const ps=await polys(z.id);if(ps&&ps.some(p=>inside(pos,p))){hit=z;break}}
-  if(!hit){$("where").textContent="Estás fuera de las zonas de bajas emisiones que tenemos.";return}
+  if(!hit){const cerca=cand.find(z=>z.sin_mapa);
+    $("where").textContent=cerca?"Estás cerca de la ZBE de "+cerca.ciudad+", pero aún no tenemos su contorno exacto: fíjate en las señales de entrada.":"Estás fuera de las zonas de bajas emisiones que tenemos.";return}
   const nm=hit.ciudad+(hit.zona?" ("+hit.zona+")":"");
   if(current&&current.nombre!==hit.ciudad)selectCity(hit.ciudad);
   if(!label){$("where").textContent="Estás dentro de la ZBE de "+nm+". Comprueba tu matrícula arriba.";return}
