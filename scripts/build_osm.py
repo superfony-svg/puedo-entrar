@@ -25,19 +25,46 @@ def slug(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 
-def overpass(query):
+CACHE = os.environ.get("OSM_CACHE", "osm_cache")
+LIMITE = time.time() + 600  # pasados 10 minutos, solo se usan las copias guardadas
+
+
+def overpass(query, intentos=2, espera=90):
+    """Devuelve la respuesta de Overpass o None si no responde (no rompe la ejecución)."""
     data = urllib.parse.urlencode({"data": query}).encode()
     last = None
-    for attempt in range(4):
+    for attempt in range(intentos):
         for url in OVERPASS:
             try:
                 req = urllib.request.Request(url, data=data, headers={"User-Agent": "puedo-entrar/1.0"})
-                with urllib.request.urlopen(req, timeout=180) as r:
+                with urllib.request.urlopen(req, timeout=espera) as r:
                     return json.load(r)
             except Exception as e:  # servidores saturados a menudo: reintentar
                 last = e
-        time.sleep(20)
-    raise SystemExit(f"Overpass no responde: {last}")
+        if attempt + 1 < intentos:
+            time.sleep(10)
+    print(f"AVISO Overpass no responde: {last}")
+    return None
+
+
+def elemento(key):
+    """Pide un elemento a Overpass; si falla, usa la copia guardada de otra noche."""
+    t, i = key.split("/")
+    cache = os.path.join(CACHE, key.replace("/", "_") + ".json")
+    r = None
+    if time.time() < LIMITE:
+        r = overpass(f"[out:json][timeout:60];{t}(id:{i});out tags geom;", intentos=1, espera=75)
+    els = (r or {}).get("elements") or []
+    if els:
+        os.makedirs(CACHE, exist_ok=True)
+        with open(cache, "w") as f:
+            json.dump(els[0], f)
+        return els[0], "Overpass"
+    if r and r.get("remark"):
+        print(f"AVISO Overpass {key}: {r['remark']}")
+    if os.path.exists(cache):
+        return json.load(open(cache)), "copia guardada"
+    return None, "sin datos"
 
 
 def rings_from_ways(ways):
@@ -103,20 +130,12 @@ def permitidas_de(tags):
 def main(out):
     conf = json.load(open(os.path.join(HERE, "osm_zonas.json"), encoding="utf-8"))
     conf.pop("_nota", None)
-    ids = {"way": [], "relation": []}
-    for k in conf:
-        t, i = k.split("/")
-        ids[t].append(i)
     els = []
-    for t in ("way", "relation"):  # por separado: si una consulta falla, la otra sigue
-        if not ids[t]:
-            continue
-        r = overpass(f"[out:json][timeout:300];{t}(id:{','.join(ids[t])});out tags geom;")
-        if r.get("remark"):
-            print(f"AVISO Overpass ({t}): {r['remark']}")
-        got = r.get("elements", [])
-        print(f"Overpass {t}: pedidos {len(ids[t])}, recibidos {len(got)}")
-        els += got
+    for k in conf:  # uno a uno: si uno falla, los demás siguen
+        el, origen = elemento(k)
+        print(f"{k} ({conf[k]['ciudad']}): {origen}")
+        if el:
+            els.append(el)
     idx_path = os.path.join(out, "zonas.json")
     index = json.load(open(idx_path, encoding="utf-8"))
     ya = {z["ciudad"] for z in index if z.get("fuente") != "osm"}

@@ -45,6 +45,13 @@ jobs:
         continue-on-error: true
         run: python scripts/build_data.py dgt.zip web/data
 
+      - name: Recuperar la copia de las zonas de OpenStreetMap
+        uses: actions/cache@v4
+        with:
+          path: osm_cache
+          key: osm-${{ github.run_id }}
+          restore-keys: osm-
+
       - name: Descargar y preparar las zonas de bajas emisiones (DGT NAP)
         run: |
           base=https://nap.dgt.es/datex2/v3/dgt/zbe/ControledZonePublication/
@@ -54,7 +61,7 @@ jobs:
             curl -fsSL --retry 3 "$base$f" -o "zbe/$(basename "$f")" || echo "::warning::No se pudo descargar $f"
           done
           python scripts/build_zonas.py zbe web/data
-          python scripts/build_osm.py web/data > osm.log 2>&1 || echo "::warning::No se pudieron añadir las zonas de OpenStreetMap"
+          timeout 1500 python scripts/build_osm.py web/data > osm.log 2>&1 || echo "::warning::No se pudieron añadir las zonas de OpenStreetMap"
           cat osm.log
           python scripts/build_paginas.py web
 
