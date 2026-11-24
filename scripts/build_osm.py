@@ -107,13 +107,16 @@ def main(out):
     for k in conf:
         t, i = k.split("/")
         ids[t].append(i)
-    q = "[out:json][timeout:180];("
-    if ids["way"]:
-        q += f"way(id:{','.join(ids['way'])});"
-    if ids["relation"]:
-        q += f"relation(id:{','.join(ids['relation'])});"
-    q += ");out tags geom;"
-    els = overpass(q)["elements"]
+    els = []
+    for t in ("way", "relation"):  # por separado: si una consulta falla, la otra sigue
+        if not ids[t]:
+            continue
+        r = overpass(f"[out:json][timeout:300];{t}(id:{','.join(ids[t])});out tags geom;")
+        if r.get("remark"):
+            print(f"AVISO Overpass ({t}): {r['remark']}")
+        got = r.get("elements", [])
+        print(f"Overpass {t}: pedidos {len(ids[t])}, recibidos {len(got)}")
+        els += got
     idx_path = os.path.join(out, "zonas.json")
     index = json.load(open(idx_path, encoding="utf-8"))
     ya = {z["ciudad"] for z in index if z.get("fuente") != "osm"}
@@ -133,7 +136,8 @@ def main(out):
             polys = rings_from_ways(outer)
         polys = [p for p in polys if len(p) >= 3]
         if not polys:
-            print(f"AVISO: {key} sin geometría válida")
+            n = len(el.get("members", [])) if el["type"] == "relation" else len(el.get("geometry", []))
+            print(f"AVISO: {key} ({c['ciudad']}) sin geometría válida; miembros/puntos: {n}")
             continue
         lats = [p[0] for poly in polys for p in poly]
         lons = [p[1] for poly in polys for p in poly]
@@ -160,6 +164,7 @@ def main(out):
             "fuente": "osm",
         })
         added += 1
+        print(f"  + {c['ciudad']} {c.get('zona', '')} ({key}, {len(polys)} anillo/s)")
     exc = json.load(open(os.path.join(HERE, "excepciones.json"), encoding="utf-8"))
     for z in index:
         if z.get("fuente") == "osm" and z["ciudad"] in exc:

@@ -54,7 +54,8 @@ jobs:
             curl -fsSL --retry 3 "$base$f" -o "zbe/$(basename "$f")" || echo "::warning::No se pudo descargar $f"
           done
           python scripts/build_zonas.py zbe web/data
-          python scripts/build_osm.py web/data || echo "::warning::No se pudieron añadir las zonas de OpenStreetMap"
+          python scripts/build_osm.py web/data > osm.log 2>&1 || echo "::warning::No se pudieron añadir las zonas de OpenStreetMap"
+          cat osm.log
           python scripts/build_paginas.py web
 
       - name: Comprobar que hay datos
@@ -75,6 +76,10 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: web
+
+      - name: Resumen de OpenStreetMap
+        if: always()
+        run: cat osm.log 2>/dev/null || true
 
   deploy:
     needs: build
