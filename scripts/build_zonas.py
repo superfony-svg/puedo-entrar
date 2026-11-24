@@ -37,7 +37,9 @@ CIUDADES = {
 }
 TODAS = ["0", "E", "C", "B", "N"]
 PERIODOS = {"L": "Días laborables", "F": "Festivos", "S": "Sábados", "D": "Domingos"}
-EPISODIO = re.compile(r"episodio|NO2|sin restricciones mientras|protocolo|superen", re.I)
+EPISODIO = re.compile(r"sin restricciones mientras|(solo|únicamente|unicamente)[^.]{0,40}episodio", re.I)
+LIBRE = re.compile(r"^\s*acceso libre", re.I)
+ORDEN = ["0", "E", "C", "B", "N"]
 
 
 def local(tag):
@@ -103,6 +105,17 @@ def restriction(reg):
     return None, True
 
 
+def coherent(perm):
+    """Si una etiqueta puede entrar, las más limpias también. Si no se cumple,
+    o no queda ninguna permitida, el dato de la DGT no es fiable."""
+    if not perm:
+        return None
+    idx = [ORDEN.index(x) for x in perm]
+    if sorted(idx) != list(range(max(idx) + 1)):
+        return None
+    return perm
+
+
 def schedule(reg):
     out = []
     for vp in find_all(reg, "validPeriod"):
@@ -166,6 +179,12 @@ def build(src, out):
                 if p is not None and permitidas is None:
                     permitidas, dudoso = p, d
                 horario += schedule(r)
+            permitidas = coherent(permitidas)
+            if permitidas is None and LIBRE.search(desc or ""):
+                permitidas, dudoso = list(TODAS), False
+            horario = [h for h in horario if not (h["de"] and h["de"] == h["a"])]
+            if desc.strip().lower() == "null":
+                desc = ""
             if not polys:
                 print(f"AVISO: {ciudad} / {name} sin polígono")
                 continue
@@ -185,10 +204,18 @@ def build(src, out):
                 "descripcion": desc,
                 "horario": horario,
                 "desde": text_of(z, "overallStartTime")[:10],
-                "info_url": text_of(z, "urlForFurtherInformation"),
+                "info_url": "" if text_of(z, "urlForFurtherInformation").lower() == "null" else text_of(z, "urlForFurtherInformation"),
                 "version": text_of(z, "controlledZoneRecordVersionTime")[:10],
                 "bbox": [min(lats), min(lons), max(lats), max(lons)],
             })
+    corr_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "correcciones.json")
+    if os.path.exists(corr_path):
+        corr = json.load(open(corr_path, encoding="utf-8"))
+        for z in index:
+            for k, v in corr.get(z["id"], {}).items():
+                if k != "motivo":
+                    z[k] = v
+                    z["corregido"] = True
     index.sort(key=lambda z: (slug(z["ciudad"]), z["zona"]))
     if len(index) < 10 and not os.environ.get("ALLOW_SMALL"):
         raise SystemExit(f"Solo {len(index)} zonas leídas: algo ha fallado")

@@ -1,0 +1,7 @@
+{
+  "_nota": "Correcciones manuales cuando el dato codificado de la DGT contradice su propia descripción. Clave: id de la zona.",
+  "dos-hermanas-zbe-dos-hermanas-parque-tecnologico": {
+    "permitidas": ["0", "E", "C"],
+    "motivo": "La descripción de la DGT dice que se prohíbe el acceso a vehículos sin distintivo y con etiqueta B."
+  }
+}

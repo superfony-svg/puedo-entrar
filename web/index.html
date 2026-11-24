@@ -147,13 +147,14 @@ async function lookup(raw){
 function zoneVerdict(z,lab){
   if(!lab)return "unk";
   if(z.estado&&z.estado!=="active")return "ok";
+  if(z.desde&&z.desde>new Date().toISOString().slice(0,10))return "ok";
   if(!z.permitidas)return "unk";
   if(z.permitidas.includes(lab))return "ok";
   return z.solo_episodios?"warn":"no";
 }
 const RANK={no:3,warn:2,unk:1,ok:0};
 function cityVerdict(c,lab){return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
-const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Sin datos de etiquetas"};
+const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta"};
 function horarioTxt(z){
   if(!z.horario||!z.horario.length)return "Consulta el horario en la web del ayuntamiento";
   return z.horario.map(h=>h.dias+(h.de?" de "+h.de+" a "+(h.a==="23:59"?"24:00":h.a):"")).join(" · ");
@@ -210,7 +211,9 @@ async function renderCity(fit){
   current.zonas.forEach(z=>{
     const add=(a,b,link)=>{const dt=el("dt",null,a),dd=el("dd");if(link){const x=el("a",null,b);x.href=link;x.target="_blank";x.rel="noopener";dd.appendChild(x)}else dd.textContent=b;info.append(dt,dd)};
     if(z.zona)add("Zona",z.zona);
-    add("Pueden entrar",z.permitidas?(z.permitidas.length?z.permitidas.map(k=>LABELS[k].name).join(", "):"Ninguna etiqueta"):"Sin datos en la DGT");
+    add("Pueden entrar",z.permitidas?z.permitidas.map(k=>LABELS[k].name).join(", "):"Los datos de la DGT no son claros: consulta la web del ayuntamiento");
+    if(z.estado&&z.estado!=="active")add("Estado","Aún no está activa");
+    if(z.desde&&z.desde>new Date().toISOString().slice(0,10))add("Estado","Aún no se aplica");
     if(z.solo_episodios)add("Cuándo se aplica","Solo durante episodios de contaminación");
     add("Horario",horarioTxt(z));
     if(z.desde)add("En vigor desde",z.desde.split("-").reverse().join("/"));
