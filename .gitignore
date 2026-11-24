@@ -2,3 +2,6 @@
 __pycache__/
 web/data/zonas.json
 web/data/zonas/
+web/zbe/
+web/sitemap.xml
+web/robots.txt

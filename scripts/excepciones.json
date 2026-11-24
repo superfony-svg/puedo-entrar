@@ -1,0 +1,15 @@
+{
+  "_nota": "Normas de cada ciudad para vehículos históricos y personas con movilidad reducida, revisadas a mano en la ordenanza. Clave: nombre de la ciudad tal como aparece en la web.",
+  "Barcelona": {
+    "historicos": "No están exentos. Pueden pedir una autorización de acceso esporádico, con un máximo de 24 días al año, y deben estar inscritos en el Registro metropolitano (AMB).",
+    "pmr": "Exentos los vehículos que transportan a personas con movilidad reducida, si están inscritos en el Registro metropolitano (AMB).",
+    "fuente": "https://bcnroc.ajuntament.barcelona.cat/jspui/bitstream/11703/129220/2/GM_ordenan%c3%a7a-ZBE_2023.pdf",
+    "revisado": "2026-11-24"
+  },
+  "Barcelona (Rondas)": {
+    "historicos": "No están exentos. Pueden pedir una autorización de acceso esporádico, con un máximo de 24 días al año, y deben estar inscritos en el Registro metropolitano (AMB).",
+    "pmr": "Exentos los vehículos que transportan a personas con movilidad reducida, si están inscritos en el Registro metropolitano (AMB).",
+    "fuente": "https://bcnroc.ajuntament.barcelona.cat/jspui/bitstream/11703/129220/2/GM_ordenan%c3%a7a-ZBE_2023.pdf",
+    "revisado": "2026-11-24"
+  }
+}

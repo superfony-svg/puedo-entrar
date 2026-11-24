@@ -4,7 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>¿Puedo entrar? Zonas de bajas emisiones por matrícula</title>
-<meta name="description" content="Escribe tu matrícula y descubre tu etiqueta ambiental de la DGT y si puedes entrar en las zonas de bajas emisiones (ZBE). Gratis y sin registro.">
+<meta name="description" content="Escribe tu matrícula y descubre tu etiqueta ambiental de la DGT y en qué zonas de bajas emisiones (ZBE) de España puedes entrar. Gratis y sin registro.">
+<link rel="canonical" href="https://superfony-svg.github.io/puedo-entrar/">
+<meta property="og:title" content="¿Puedo entrar con mi coche? Comprueba tu matrícula">
+<meta property="og:description" content="Tu etiqueta de la DGT y en qué zonas de bajas emisiones de España puedes entrar. Gratis y sin registro.">
+<meta property="og:type" content="website"><meta property="og:url" content="https://superfony-svg.github.io/puedo-entrar/"><meta property="og:image" content="https://superfony-svg.github.io/puedo-entrar/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%231f6f5c'/%3E%3Ctext x='32' y='42' font-size='28' text-anchor='middle' fill='white' font-family='Arial' font-weight='700'%3EZ%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
@@ -113,6 +119,11 @@ select{font:inherit;padding:10px;border-radius:10px;border:1.5px solid var(--lin
     <dl id="info"></dl>
   </section>
 
+  <section class="card" aria-labelledby="h-ciu">
+    <h2 id="h-ciu">Zonas de bajas emisiones por ciudad</h2>
+    <p class="help"><!--CIUDADES--><!--/CIUDADES--></p>
+  </section>
+
   <footer>
     <span>Etiquetas: fichero oficial de la Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico), actualizado cada día. <span id="meta"></span> Mostramos la etiqueta tal como la asigna la DGT: solo traducimos su código (por ejemplo, 16MC) a su nombre (C). Esta información se puede consultar gratis en la <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">sede de la DGT</a>. <a href="https://sede.dgt.gob.es/es/contenido/derechos-sobre-la-propiedad-intelectual/index.html" target="_blank" rel="noopener">Condiciones de uso de la DGT</a>.</span>
     <span>Zonas: Punto de Acceso Nacional de la DGT (nap.dgt.es, licencia CC BY 4.0), actualizado cada día. Las multas suelen ser de 200 € (100 € con pronto pago), pero las fija cada ayuntamiento. Web no oficial e informativa: confirma siempre en la web de tu ayuntamiento.</span>
@@ -161,7 +172,7 @@ function zoneVerdict(z,lab){
 const RANK={no:4,warn:3,exc:2,unk:1,ok:0};
 const hasExc=()=>$("x-hist").checked||$("x-pmr").checked;
 function cityVerdict(c,lab){return c.zonas.map(z=>zoneVerdict(z,lab)).reduce((a,b)=>RANK[b]>RANK[a]?b:a,"ok")}
-const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta",exc:"Probablemente exento: confírmalo"};
+const VTXT={ok:"Puedes entrar",no:"No puedes entrar",warn:"Sí, salvo aviso de contaminación",unk:"Datos poco claros: consulta",exc:"Puede que tengas excepción: compruébalo"};
 function horarioTxt(z){
   if(!z.horario||!z.horario.length)return "Consulta el horario en la web del ayuntamiento";
   return z.horario.map(h=>h.dias+(h.de?" de "+h.de+" a "+(h.a==="23:59"?"24:00":h.a):"")).join(" · ");
@@ -184,7 +195,7 @@ function showLabel(lab,title,sub){
     const res=cities.map(c=>({c,v:cityVerdict(c,lab)}));
     const ok=res.filter(r=>r.v==="ok").length;
     v.appendChild(el("p","summary","Puedes entrar siempre en "+ok+" de "+res.length+" ciudades con zona de bajas emisiones"));
-    if(hasExc())v.appendChild(el("p","help","Los vehículos históricos y los de personas con movilidad reducida están exentos en casi todas las zonas, pero cada ayuntamiento pone sus condiciones y a menudo hay que registrar la matrícula antes de entrar. Mira la web de cada ayuntamiento."));
+    if(hasExc())v.appendChild(el("p","help","Muchos ayuntamientos dan excepciones o permisos a los vehículos históricos y a los de personas con movilidad reducida, pero las condiciones cambian mucho de una ciudad a otra (por ejemplo, en Barcelona los históricos solo pueden entrar 24 días al año con permiso) y casi siempre hay que registrar la matrícula antes. Toca una ciudad para ver su norma."));
     else if(lab==="N"||lab==="B")v.appendChild(el("p","help","¿Es un vehículo histórico o tienes tarjeta de movilidad reducida? Márcalo arriba: en esos casos suele haber excepciones."));
     const bad=res.filter(r=>r.v!=="ok");
     if(bad.length){v.appendChild(el("p","help","Ojo en estas:"));const ul=el("div","list");bad.forEach(r=>ul.appendChild(cityRow(r.c,r.v)));v.appendChild(ul)}
@@ -216,7 +227,7 @@ async function renderCity(fit){
   const info=$("info");info.textContent="";
   const cv=$("cityverdict");cv.textContent="";
   if(label){const v=cityVerdict(current,label);const d=el("div","verdict "+(v==="ok"?"ok":v==="no"?"no":"warn"));
-    if(v==="exc")d.append(el("strong",null,current.nombre+": probablemente exento"),el("span",null,"Comprueba en la web del ayuntamiento si debes registrar tu matrícula antes de entrar."));else
+    if(v==="exc")d.append(el("strong",null,current.nombre+": puede que tengas excepción"),el("span",null,"Comprueba en la web del ayuntamiento si debes registrar tu matrícula antes de entrar."));else
     d.append(el("strong",null,current.nombre+": "+VTXT[v].toLowerCase()),el("span",null,label==="N"?"Para coches sin etiqueta.":"Con etiqueta "+LABELS[label].name+"."));cv.appendChild(d)}
   current.zonas.forEach(z=>{
     const add=(a,b,link)=>{const dt=el("dt",null,a),dd=el("dd");if(link){const x=el("a",null,b);x.href=link;x.target="_blank";x.rel="noopener";dd.appendChild(x)}else dd.textContent=b;info.append(dt,dd)};
@@ -228,6 +239,8 @@ async function renderCity(fit){
     add("Horario",horarioTxt(z));
     if(z.desde)add("En vigor desde",z.desde.split("-").reverse().join("/"));
     if(z.descripcion&&z.descripcion.length>25)add("Detalles",z.descripcion);
+    if(z.excepciones&&!z.zona||z.excepciones&&z===current.zonas[0]){add("Vehículos históricos",z.excepciones.historicos);add("Movilidad reducida",z.excepciones.pmr);if(z.excepciones.fuente)add("Norma","Ordenanza municipal",z.excepciones.fuente)}
+    else if(z===current.zonas[0])add("Históricos y movilidad reducida","Aún no hemos revisado la norma de esta ciudad: consúltala en la web del ayuntamiento.");
     if(z.info_url&&/^https?:\/\//.test(z.info_url))add("Más info","Web del ayuntamiento",z.info_url);
   });
   if(!map)return;
@@ -253,7 +266,7 @@ async function updateWhere(){
     no:"Estás dentro de la ZBE de "+nm+" y con tu etiqueta no deberías estar aquí (revisa el horario).",
     warn:"Estás dentro de la ZBE de "+nm+". Solo tendrías problema si hay aviso de contaminación.",
     unk:"Estás dentro de la ZBE de "+nm+". No tenemos datos de etiquetas: consulta la web del ayuntamiento.",
-    exc:"Estás dentro de la ZBE de "+nm+". Con tu excepción probablemente puedes estar aquí, si cumples las condiciones del ayuntamiento."}[v];
+    exc:"Estás dentro de la ZBE de "+nm+". Con tu excepción puede que puedas estar aquí, si cumples las condiciones del ayuntamiento."}[v];
 }
 $("locate").addEventListener("click",()=>{
   if(!navigator.geolocation){$("where").textContent="Tu navegador no permite usar la ubicación.";return}
@@ -276,7 +289,10 @@ async function init(){
     map=L.map("map",{scrollWheelZoom:false});
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
   }
-  if(cities.length)selectCity((cities.find(c=>c.nombre==="Madrid")||cities[0]).nombre);
+  const qs=new URLSearchParams(location.search);
+  const wanted=qs.get("ciudad");
+  if(cities.length)selectCity((cities.find(c=>c.nombre===wanted)||cities.find(c=>c.nombre==="Madrid")||cities[0]).nombre);
+  if(qs.get("q")){$("q").value=qs.get("q");$("f").requestSubmit()}
   const m=await getJSON("data/meta.json");
   if(m&&m.actualizado)$("meta").textContent="Datos del "+m.actualizado.split("-").reverse().join("/")+".";
 }

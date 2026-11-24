@@ -216,6 +216,12 @@ def build(src, out):
                 if k != "motivo":
                     z[k] = v
                     z["corregido"] = True
+    exc_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "excepciones.json")
+    if os.path.exists(exc_path):
+        exc = json.load(open(exc_path, encoding="utf-8"))
+        for z in index:
+            if z["ciudad"] in exc:
+                z["excepciones"] = exc[z["ciudad"]]
     index.sort(key=lambda z: (slug(z["ciudad"]), z["zona"]))
     if len(index) < 10 and not os.environ.get("ALLOW_SMALL"):
         raise SystemExit(f"Solo {len(index)} zonas leídas: algo ha fallado")
