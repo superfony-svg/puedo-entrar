@@ -39,7 +39,7 @@ RECURRIR = {
 <li><strong>Si te rechazan las alegaciones</strong>, puedes poner un <strong>recurso de reposición</strong> en el plazo de 1 mes. Si en 1 mes no contestan, se entiende rechazado.</li>
 <li><strong>Último paso: el juzgado</strong> (contencioso-administrativo). Puede costar más que la multa, así que solo merece la pena en casos claros.</li>
 </ol>
-<p class="muted">Los plazos son los generales de tráfico. Cada ayuntamiento puede tener detalles propios: míralos en su notificación.</p></section>
+<p class="muted">Los plazos son los generales de tráfico. Cada ayuntamiento puede tener detalles propios: míralos en su notificación. Esta guía es información general, no asesoramiento jurídico para tu caso.</p></section>
 
 <section class="card"><h2>Caso Málaga: devuelven las multas</h2>
 <p>El Tribunal Superior de Justicia de Andalucía anuló la regulación de la ZBE de Málaga (sentencia de 6 de mayo de 2026) por discriminatoria: los coches empadronados en Málaga estaban exentos y los de fuera no. El Ayuntamiento <strong>no pone multas desde el 14 de octubre de 2026</strong>.</p>

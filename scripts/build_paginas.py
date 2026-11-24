@@ -116,8 +116,11 @@ def resumen(zs):
     return "pueden entrar con etiqueta " + ", ".join(NOMBRES[k] for k in comunes) if comunes else "acceso muy restringido"
 
 
-FOOTER = ('<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico) y Punto de Acceso Nacional de la DGT (CC BY 4.0) y '
-          '© colaboradores de OpenStreetMap (ODbL), actualizados cada día. Web no oficial e informativa: confirma siempre en la web del ayuntamiento. <a href="{raiz}aviso-legal/">Aviso legal y privacidad</a>.</footer>')
+FOOTER = ('<footer>Datos: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico); Punto de Acceso Nacional de la DGT '
+          '(<a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>, con cambios de formato y correcciones nuestras) y '
+          '<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores de OpenStreetMap</a> (ODbL). '
+          'Actualizados el ' + date.today().strftime("%d/%m/%Y") + '. Web no oficial, sin relación con la DGT ni con los ayuntamientos: confirma siempre en la web del ayuntamiento. '
+          '<a href="{raiz}aviso-legal/">Aviso legal y privacidad</a>.</footer>')
 
 
 def guias_links(raiz):
@@ -191,19 +194,25 @@ def aviso_legal():
 <li>Usar esta web no da derecho a entrar en ninguna zona ni sirve como justificante ante una multa.</li>
 </ul></section>
 <section class="card"><h2>Responsabilidad</h2>
-<p>Hacemos lo posible para que la información sea correcta, pero no podemos garantizarlo. Comprueba siempre la norma oficial antes de entrar en una zona de bajas emisiones. No respondemos de las sanciones o daños que se deriven de decisiones tomadas solo con la información de esta web, en la medida en que la ley lo permita.</p></section>
+<p>Hacemos lo posible para que la información sea correcta y esté al día, pero no podemos garantizarlo. Comprueba siempre la norma oficial antes de entrar en una zona de bajas emisiones. No respondemos de las sanciones o daños que se deriven de decisiones tomadas solo con la información de esta web, salvo en lo que la ley no permita excluir.</p>
+<p>Las guías explican de forma general cómo funcionan las multas, las ayudas y las excepciones. No son asesoramiento jurídico para un caso concreto.</p></section>
+<section class="card"><h2>Titular</h2>
+<p>¿Puedo entrar? es un proyecto personal, gratuito y sin publicidad. Si en el futuro tiene publicidad o ingresos, aquí aparecerán el nombre, el NIF, el domicilio y el correo de contacto del titular, como exige la Ley de Servicios de la Sociedad de la Información (LSSI). Mientras tanto, puedes contactar por el enlace de «Errores y contacto».</p></section>
 <section class="card"><h2>Privacidad</h2>
 <ul>
-<li><strong>No hay registro, ni cookies, ni analítica.</strong></li>
-<li><strong>Matrícula:</strong> la búsqueda se hace en tu propio navegador. Tu navegador descarga un fichero que contiene miles de matrículas y busca la tuya en él. No guardamos las matrículas que escribes.</li>
-<li><strong>Ubicación:</strong> solo se usa si pulsas «¿Dónde estoy?», y se queda en tu dispositivo. No se envía a nadie.</li>
-<li><strong>Municipio del impuesto:</strong> si lo eliges, se guarda solo en tu navegador (almacenamiento local) para la próxima visita. Se borra al borrar los datos del sitio.</li>
-<li><strong>Servicios de terceros:</strong> la web está alojada en GitHub Pages (GitHub, Inc.) y el mapa usa las imágenes de OpenStreetMap. Como en cualquier web, esos servidores reciben tu dirección IP al cargar las páginas y el mapa.</li>
+<li><strong>No tenemos servidores propios ni base de datos:</strong> no recogemos ni guardamos datos personales. No hay registro, ni cookies, ni analítica, ni publicidad.</li>
+<li><strong>Matrícula:</strong> la búsqueda se hace en tu propio navegador. Tu navegador descarga un fichero con miles de matrículas que empiezan igual que la tuya y busca la tuya dentro. La matrícula completa no sale de tu dispositivo.</li>
+<li><strong>Ubicación:</strong> solo se usa si pulsas «¿Dónde estoy?» y das permiso. Se queda en tu dispositivo y no se envía a nadie.</li>
+<li><strong>Municipio del impuesto:</strong> si lo eliges, se guarda solo en tu navegador (almacenamiento local) para recordarlo la próxima vez. Es una preferencia que pides tú, por lo que no necesita aviso de cookies. Se borra al borrar los datos del sitio en tu navegador.</li>
+<li><strong>Servicios de terceros:</strong> la web está alojada en GitHub Pages (GitHub, Inc.) y el mapa usa las imágenes de OpenStreetMap y la librería Leaflet desde cdnjs (Cloudflare). Como en cualquier web, esos servidores reciben tu dirección IP y los ficheros que pide tu navegador, según sus propias políticas de privacidad.</li>
+<li><strong>Si nos avisas de un error</strong> en GitHub, tu mensaje es público y lo gestiona GitHub. Solo lo usamos para corregir el dato.</li>
 </ul></section>
-<section class="card"><h2>Fuentes y licencias</h2>
+<section class="card"><h2>Fuentes, licencias y reutilización</h2>
 <ul>
-<li>Etiquetas: Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico). Se muestran sin alterar. Se pueden consultar gratis en la <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">sede de la DGT</a>.</li>
-<li>Zonas: Punto de Acceso Nacional de la DGT (licencia CC BY 4.0) y © colaboradores de OpenStreetMap (licencia ODbL).</li>
+<li><strong>Etiquetas:</strong> fichero de distintivos ambientales de la Dirección General de Tráfico (Organismo Autónomo Jefatura Central de Tráfico), que reutilizamos según sus condiciones y la Ley 37/2007 de reutilización de la información del sector público. Citamos la fuente, indicamos la fecha de actualización, no alteramos los datos (solo traducimos el código, por ejemplo 16MC, a su nombre, C) y la DGT no patrocina ni colabora con esta web. Esta información se puede consultar gratis en la <a href="https://sede.dgt.gob.es/es/vehiculos/informacion-de-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">sede de la DGT</a> (<a href="https://sede.dgt.gob.es/es/contenido/derechos-sobre-la-propiedad-intelectual/index.html" target="_blank" rel="noopener">condiciones de uso</a>).</li>
+<li><strong>Zonas de la DGT:</strong> Punto de Acceso Nacional de la DGT (nap.dgt.es), licencia <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noopener">CC BY 4.0</a>. Hemos cambiado el formato y corregido a mano algunos datos que se contradecían; cada ciudad indica cuándo un dato está corregido.</li>
+<li><strong>Zonas de OpenStreetMap y mapa:</strong> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© colaboradores de OpenStreetMap</a>. Los contornos de zonas sacados de OpenStreetMap se ofrecen bajo la licencia <a href="https://opendatacommons.org/licenses/odbl/" target="_blank" rel="noopener">ODbL</a>.</li>
+<li><strong>Textos de esta web:</strong> redactados por nosotros. Los datos de normas que tomamos de resúmenes de terceros se indican en cada ciudad como «sin verificar».</li>
 </ul></section>
 <section class="card"><h2>Errores y contacto</h2>
 <p>Si ves un dato mal, <a href="https://github.com/superfony-svg/puedo-entrar/issues/new?title=Error%20en%20los%20datos" target="_blank" rel="noopener">avísanos aquí</a>, con el enlace a la norma oficial si puedes. Lo revisaremos y corregiremos lo antes posible.</p></section>
